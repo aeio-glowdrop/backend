@@ -27,7 +27,6 @@ import static com.unithon.aeio.global.result.code.MemberResultCode.REFRESH_TOKEN
 public class OauthController {
 
     private final OauthService oauthService;
-    private final MemberConverter memberConverter;
 
     @PostMapping("/login/oauth")
     @Operation(summary = "로그인 API", description = "카카오톡을 통해 서비스에 로그인하는 API입니다.")
