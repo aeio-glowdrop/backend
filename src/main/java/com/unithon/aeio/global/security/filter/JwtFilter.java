@@ -42,16 +42,6 @@ public class JwtFilter extends GenericFilterBean {
 
         // HttpServletRequest로 변환하여 HTTP 요청 정보를 가져옴
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String path = httpServletRequest.getRequestURI();
-
-
-        // 인증이 필요 없는 경로는 필터 건너뜀
-        if (isExcludedPath(path)) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
-
-
         // 요청 URL을 로깅함 (HTTP 요청이 들어왔을 때, 해당 요청이 어떤 URL로 들어왔는지를 기록(log))
         logger.info("[JwtFilter] : " + httpServletRequest.getRequestURL().toString());
         // 요청 헤더에서 JWT 토큰을 추출
@@ -81,16 +71,6 @@ public class JwtFilter extends GenericFilterBean {
 
         // 필터 체인의 다음 필터를 호출하여 요청을 계속 처리
         filterChain.doFilter(servletRequest, servletResponse);
-    }
-
-    private boolean isExcludedPath(String path) {
-        return path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/swagger-resources")
-                || path.startsWith("/webjars")
-                || path.startsWith("/auth")
-                || path.startsWith("/error")
-                || path.startsWith("/login");
     }
 
     // HTTP 요청의 Authorization 헤더에서 JWT 토큰을 추출하는 메소드
