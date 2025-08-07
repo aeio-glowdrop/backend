@@ -46,11 +46,11 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/login/**").permitAll() // 앱 링크 검증 요청은 안드로이드 시스템(Google 서버)에서 비로그인 상태로 HTTP GET 요청
-                        .requestMatchers("/.well-known/assetlinks.json").permitAll() // 앱링크 경로도 인증 없이 접근 가능 (
                         .requestMatchers("/user/**").hasAuthority(UserRole.USER.getRole()) // /user/** 경로는 USER 권한이 있어야 접근 가능
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
+                                "/webjars/**",
                                 "/v3/api-docs/**").permitAll() // 스웨거 경로는 인증 없이 접근 가능
                         .anyRequest().authenticated()) // 그 외 모든 요청은 인증이 필요
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않고, JWT로 인증을 관리
@@ -72,7 +72,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
-                                "/.well-known/assetlinks.json", // 앱링크 경로 제외
+                                "/webjars/**",
                                 "/v3/api-docs/**" // 스웨거 경로도 보안 필터에서 제외
                         );
     }
