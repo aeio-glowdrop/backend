@@ -43,7 +43,6 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable()) // CSRF 보호를 비활성화
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/login/**").permitAll() // 앱 링크 검증 요청은 안드로이드 시스템(Google 서버)에서 비로그인 상태로 HTTP GET 요청
                         .requestMatchers("/user/**").hasAuthority(UserRole.USER.getRole()) // /user/** 경로는 USER 권한이 있어야 접근 가능
@@ -68,7 +67,6 @@ public class SecurityConfig {
         return web ->
                 web.ignoring()
                         .requestMatchers("/login/**") // 로그인 및 토큰 갱신 경로는 보안 필터에서 제외
-                        .requestMatchers("/auth/**") //auth관련 경로도 제외
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",

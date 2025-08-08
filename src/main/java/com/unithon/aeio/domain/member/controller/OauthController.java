@@ -43,7 +43,7 @@ public class OauthController {
     }
 
     // 특정 authId를 가진 회원의 회원가입 여부 조회
-    @PostMapping("/auth/check-registration")
+    @PostMapping("/login/check-registration")
     @Operation(summary = "회원가입 여부 조회 API", description = "authId를 통해, 해당 정보와 일치하는 회원의 가입 여부를 조회하는 API입니다.")
     public ResultResponse<OauthResponse.CheckMemberRegistration> checkSignup(@Valid @RequestBody OauthRequest.LoginRequest request) {
         return ResultResponse.of(CHECK_MEMBER_REGISTRATION, oauthService.checkRegistration(request));
