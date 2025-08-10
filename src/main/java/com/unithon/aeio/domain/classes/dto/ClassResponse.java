@@ -14,4 +14,12 @@ public abstract class ClassResponse {
     public static class ClassId {
         private Long classId;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberClassId {
+        private Long memberClassId;
+    }
 }

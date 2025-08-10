@@ -20,9 +20,11 @@ public abstract class ClassRequest {
 
         @NotNull(message = "수업 유형(classType)은 필수입니다.")
         private ClassType classType;
-
         @NotBlank(message = "선생님 입력은 필수입니다.")
         @Size(max = 9, message = "이름은 최대 9자까지 입력할 수 있습니다.")
         private String teacher;
+        @NotBlank(message = "클래스 이름 입력은 필수입니다.")
+        @Size(max = 30, message = "클래스 이름은 최대 30자까지 입력할 수 있습니다.")
+        private String className;
     }
 }
