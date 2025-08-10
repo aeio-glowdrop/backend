@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.member.converter;
 
 
+import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,14 @@ public class MemberConverter {
     // 회원가입 여부 체크
     public OauthResponse.CheckMemberRegistration toCheckMemberRegistration(boolean isRegistered) {
         return new OauthResponse.CheckMemberRegistration(isRegistered);
+    }
+
+    // member Id만 반환
+    public MemberResponse.MemberId toMemberId(Member member) {
+        return MemberResponse.MemberId
+                .builder()
+                .memberId(member.getId())
+                .build();
     }
 
 
