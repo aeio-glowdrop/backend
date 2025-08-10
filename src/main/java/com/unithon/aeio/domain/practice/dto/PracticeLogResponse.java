@@ -25,4 +25,12 @@ public abstract class PracticeLogResponse {
         private String photoUrl;
         private String photoName;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PracticeLogId {
+        private Long practiceLogId;
+    }
 }

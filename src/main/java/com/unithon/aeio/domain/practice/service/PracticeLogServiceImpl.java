@@ -5,9 +5,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.unithon.aeio.domain.classes.entity.Classes;
+import com.unithon.aeio.domain.classes.repository.ClassRepository;
+import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.practice.converter.PracticeLogConverter;
 import com.unithon.aeio.domain.practice.dto.PracticeLogRequest;
 import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.practice.entity.PracticeLog;
+import com.unithon.aeio.domain.practice.repository.PracticeLogRepository;
+import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +26,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.unithon.aeio.global.error.code.JwtErrorCode.CLASS_NOT_FOUND;
+
 @Service
 @Transactional
 @Slf4j
@@ -28,6 +36,8 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
     private final AmazonS3 amazonS3;
     private final PracticeLogConverter practiceLogConverter;
+    private final ClassRepository classRepository;
+    private final PracticeLogRepository practiceLogRepository;
 
     @Value("${spring.cloud.aws.s3.photo-bucket}")
     private String BUCKET_NAME;
@@ -91,4 +101,31 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     }
 
     // ---------- 여기까지 presigned
+
+    @Override
+    public PracticeLogResponse.PracticeLogId createBasicLog(Long classId, Member member, PracticeLogRequest.BasicLog request) {
+        // 클래스 존재 확인
+        Classes classes = findClass(classId);
+
+        // practiceLog 생성 (builder)
+        PracticeLog log = PracticeLog
+                .builder()
+                .member(member)
+                .classes(classes)
+                .expressionlessPhoto(request.getExpressionlessPhoto())
+                .feedBack(request.getFeedBack())
+                .count(request.getCount())
+                .build();
+
+        // 저장
+        practiceLogRepository.save(log);
+
+        return practiceLogConverter.toPracticeLogId(log);
+
+    }
+
+    private Classes findClass(long classId) {
+        return classRepository.findById(classId)
+                .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+    }
 }

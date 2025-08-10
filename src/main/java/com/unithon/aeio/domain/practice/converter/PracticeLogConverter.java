@@ -1,6 +1,9 @@
 package com.unithon.aeio.domain.practice.converter;
 
+import com.unithon.aeio.domain.member.dto.MemberResponse;
+import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.practice.entity.PracticeLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +38,14 @@ public class PracticeLogConverter {
                 .preSignedUrl(preSignedUrl)
                 .photoUrl(photoUrl)
                 .photoName(photoName)
+                .build();
+    }
+
+    // id만 반환
+    public PracticeLogResponse.PracticeLogId toPracticeLogId(PracticeLog practiceLog) {
+        return PracticeLogResponse.PracticeLogId
+                .builder()
+                .practiceLogId(practiceLog.getId())
                 .build();
     }
 }
