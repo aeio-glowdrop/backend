@@ -1,12 +1,17 @@
 package com.unithon.aeio.domain.member.entity;
 
 import com.unithon.aeio.global.entity.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -28,9 +36,9 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
-    @Column(nullable = false)
+    @Column
     private Long authId;
-    @Column(nullable = false)
+    @Column
     private String name;
     @Column
     private String email;      // Access Token
@@ -38,4 +46,17 @@ public class Member extends BaseTimeEntity {
     private String refreshToken;     // Refresh Token
     @Column
     private String accessToken;      // Access Token
+
+    @Column
+    @Size(max = 9)
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Gender gender;
+
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private List<Worry> worries = new ArrayList<>();
+
 }
