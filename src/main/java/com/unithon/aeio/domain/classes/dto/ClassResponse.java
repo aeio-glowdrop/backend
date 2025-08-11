@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public abstract class ClassResponse {
 
     @Getter
@@ -14,4 +16,21 @@ public abstract class ClassResponse {
     public static class ClassId {
         private Long classId;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberClassId {
+        private Long memberClassId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeInfo {
+        private Long classLikeId; // 좋아요 누른 시각
+    }
+
 }

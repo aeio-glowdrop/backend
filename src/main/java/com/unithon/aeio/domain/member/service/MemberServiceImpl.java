@@ -45,5 +45,4 @@ public class MemberServiceImpl implements MemberService {
 
         return memberConverter.toMemberId(member);
     }
-
 }
