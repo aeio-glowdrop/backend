@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.classes.converter;
 
 import com.unithon.aeio.domain.classes.dto.ClassResponse;
+import com.unithon.aeio.domain.classes.entity.ClassLike;
 import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,14 @@ public class ClassConverter {
         return ClassResponse.MemberClassId
                 .builder()
                 .memberClassId(mc.getId())
+                .build();
+    }
+
+    // classLike id만 반환
+    public ClassResponse.LikeInfo toClassLikeId(ClassLike cl) {
+        return ClassResponse.LikeInfo
+                .builder()
+                .classLikeId(cl.getId())
                 .build();
     }
 }

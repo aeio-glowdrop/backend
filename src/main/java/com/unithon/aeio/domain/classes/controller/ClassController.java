@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,4 +40,13 @@ public class ClassController {
         return ResultResponse.of(ClassResultCode.SUBSCRIBE_CLASS,
                 classService.subsClass(classId, member));
     }
+
+    @PostMapping("/like")
+    @Operation(summary = "클래스 좋아요 API", description = "사용자가 클래스를 좋아요하는 API입니다.")
+    public ResultResponse<ClassResponse.LikeInfo> likeClass(@RequestParam("classId") Long classId,
+                                                            @LoginMember Member member) {
+        return ResultResponse.of(ClassResultCode.LIKE_CLASS,
+                classService.likeClass(classId, member));
+    }
+
 }
