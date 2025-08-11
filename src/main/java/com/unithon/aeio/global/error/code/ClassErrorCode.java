@@ -10,6 +10,7 @@ public enum ClassErrorCode implements ErrorCode {
     CLASS_NOT_FOUND(405, "EC000", "해당 클래스를 찾을 수 없습니다"),
     ALREADY_SUBSCRIBED(405, "EG001", "이미 구독한 클래스입니다."),
     ALREADY_LIKED(405, "EG002", "이미 좋아요를 누른 클래스입니다."),
+    NOT_LIKED(404, "EP003", "좋아요가 눌려 있지 않은 사진이기 때문에, 좋아요를 취소할 수 없습니다."),
     ;
 
     private final int status;

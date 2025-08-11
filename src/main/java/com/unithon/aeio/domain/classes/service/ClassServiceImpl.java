@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_LIKED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_SUBSCRIBED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.CLASS_NOT_FOUND;
+import static com.unithon.aeio.global.error.code.ClassErrorCode.NOT_LIKED;
 
 
 @Service
@@ -96,5 +97,22 @@ public class ClassServiceImpl implements ClassService {
     private Classes findClass(Long classId) {
         return classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+    }
+
+    @Override
+    public ClassResponse.ClassId cancelLike(Long classId, Member member) {
+
+        // class 엔티티 조회
+        Classes classes = findClass(classId);
+
+        // 같은 조합으로 기록된 좋아요가 있는지 확인하고, 없다면 에러
+        ClassLike classLike = classLikeRepository.findByClassesAndMember(classes, member)
+                .orElseThrow(() -> new BusinessException(NOT_LIKED));
+
+        // 좋아요 기록 hard delete
+        classLikeRepository.delete(classLike);
+
+        // 5. 컨버터를 사용해 응답 DTO 생성 및 반환
+        return classConverter.toClassId(classes);
     }
 }

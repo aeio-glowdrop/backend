@@ -8,4 +8,5 @@ public interface ClassService {
     ClassResponse.ClassId createClass(ClassRequest.ClassInfo request);
     ClassResponse.MemberClassId subsClass(Long classId, Member member);
     ClassResponse.LikeInfo likeClass(Long classId, Member member);
+    ClassResponse.ClassId cancelLike(Long classId, Member member);
 }
