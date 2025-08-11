@@ -51,9 +51,6 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/v3/api-docs/**").permitAll() // 스웨거 경로는 인증 없이 접근 가능
-                        .requestMatchers("/members/**",
-                                "/classes/**").permitAll() //테스트 임시
-
                         .anyRequest().authenticated()) // 그 외 모든 요청은 인증이 필요
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않고, JWT로 인증을 관리
                 .formLogin(AbstractHttpConfigurer::disable) // 로그인 폼을 사용하지 않도록 설정
@@ -74,9 +71,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/v3/api-docs/**", // 스웨거 경로도 보안 필터에서 제외
-
-                                "/members/**", "/classes/**" //테스트 임시
+                                "/v3/api-docs/**" // 스웨거 경로도 보안 필터에서 제외
                         );
     }
 }
