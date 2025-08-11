@@ -23,9 +23,7 @@ public class MemberServiceImpl implements MemberService {
     private final WorryRepository worryRepository;
 
     @Override
-    public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member loginMember) {
-        // 로그인 없을 때, 임시로 멤버 생성
-        Member member = getOrCreateMember(loginMember);
+    public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member) {
         // 프로필 업데이트
         member.setNickname(request.getNickName());
         // 성별 업데이트
@@ -48,13 +46,4 @@ public class MemberServiceImpl implements MemberService {
         return memberConverter.toMemberId(member);
     }
 
-    // 멤버 찾고 없으면 저장하는 함수 (임시 로그인 패스 대용)
-    private Member getOrCreateMember(Member loginMember) {
-        if (loginMember != null && loginMember.getId() != null) {
-            return memberRepository.findById(loginMember.getId())
-                    .orElseGet(() -> memberRepository.save(Member.builder().build()));
-        }
-        // loginMember 자체가 null이거나 id가 없으면 바로 생성
-        return memberRepository.save(Member.builder().build());
-    }
 }
