@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.classes.entity;
 
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +25,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClassLike {
+public class ClassLike extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_like_id")
