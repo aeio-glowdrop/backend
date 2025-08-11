@@ -1,4 +1,4 @@
-package com.unithon.aeio.domain.practice.service;
+package com.unithon.aeio.domain.classes.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
@@ -6,13 +6,15 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.unithon.aeio.domain.classes.entity.Classes;
+import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.domain.classes.repository.ClassRepository;
+import com.unithon.aeio.domain.classes.repository.MemberClassRepository;
 import com.unithon.aeio.domain.member.entity.Member;
-import com.unithon.aeio.domain.practice.converter.PracticeLogConverter;
-import com.unithon.aeio.domain.practice.dto.PracticeLogRequest;
-import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
-import com.unithon.aeio.domain.practice.entity.PracticeLog;
-import com.unithon.aeio.domain.practice.repository.PracticeLogRepository;
+import com.unithon.aeio.domain.classes.converter.PracticeLogConverter;
+import com.unithon.aeio.domain.classes.dto.PracticeLogRequest;
+import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.entity.PracticeLog;
+import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
 import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.unithon.aeio.global.error.code.ClassErrorCode.MEMBER_CLASS_NOT_FOUND;
 import static com.unithon.aeio.global.error.code.JwtErrorCode.CLASS_NOT_FOUND;
 
 @Service
@@ -38,6 +41,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     private final PracticeLogConverter practiceLogConverter;
     private final ClassRepository classRepository;
     private final PracticeLogRepository practiceLogRepository;
+    private final MemberClassRepository memberClassRepository;
 
     @Value("${spring.cloud.aws.s3.photo-bucket}")
     private String BUCKET_NAME;
@@ -107,11 +111,13 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         // 클래스 존재 확인
         Classes classes = findClass(classId);
 
+        // 구독 정보 가져오기
+        MemberClass memberClass = findMemberClass(member.getId(), classId);
+
         // practiceLog 생성 (builder)
         PracticeLog log = PracticeLog
                 .builder()
-                .member(member)
-                .classes(classes)
+                .memberClass(memberClass)
                 .expressionlessPhoto(request.getExpressionlessPhoto())
                 .feedBack(request.getFeedBack())
                 .count(request.getCount())
@@ -127,5 +133,10 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     private Classes findClass(long classId) {
         return classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+    }
+
+    private MemberClass findMemberClass(long memberId, long classId) {
+        return memberClassRepository.findByMemberIdAndClassesId(memberId, classId)
+                .orElseThrow(() -> new BusinessException(MEMBER_CLASS_NOT_FOUND));
     }
 }

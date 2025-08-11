@@ -1,6 +1,6 @@
-package com.unithon.aeio.domain.practice.repository;
+package com.unithon.aeio.domain.classes.repository;
 
-import com.unithon.aeio.domain.practice.entity.PracticeLog;
+import com.unithon.aeio.domain.classes.entity.PracticeLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

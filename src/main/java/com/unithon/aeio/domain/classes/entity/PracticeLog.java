@@ -1,6 +1,5 @@
 package com.unithon.aeio.domain.classes.entity;
 
-import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,26 +18,32 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "member_class")
+@Table(name = "practice_log")
 @SQLRestriction("deleted_at is NULL")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberClass extends BaseTimeEntity {
+public class PracticeLog extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_class_id")
+    @Column(name = "practice_log_id")
     private Long id;
 
+    @Column
+    private String expressionlessPhoto; //무표정 사진 URL
+    @Column
+    private String smilePhoto; //웃는 사진 URL
+    @Column
+    private String feedBack;
+    @Column
+    private Integer count; //몇번 했는지
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id")
-    private Classes classes;
+    @JoinColumn(name = "member_class_id")
+    private MemberClass memberClass;
+
 }

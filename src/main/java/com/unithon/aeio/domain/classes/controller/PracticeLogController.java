@@ -1,10 +1,10 @@
-package com.unithon.aeio.domain.practice.controller;
+package com.unithon.aeio.domain.classes.controller;
 
 import com.unithon.aeio.domain.member.entity.Member;
-import com.unithon.aeio.domain.practice.converter.PracticeLogConverter;
-import com.unithon.aeio.domain.practice.dto.PracticeLogRequest;
-import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
-import com.unithon.aeio.domain.practice.service.PracticeLogService;
+import com.unithon.aeio.domain.classes.converter.PracticeLogConverter;
+import com.unithon.aeio.domain.classes.dto.PracticeLogRequest;
+import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.service.PracticeLogService;
 import com.unithon.aeio.global.result.ResultResponse;
 import com.unithon.aeio.global.security.annotation.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;

@@ -51,7 +51,7 @@ public class ClassController {
                 classService.likeClass(classId, member));
     }
 
-    @DeleteMapping("//cancelLike")
+    @DeleteMapping("/cancelLike")
     @Operation(summary = "클래스 좋아요 취소 API",
             description = "로그인한 사용자가 특정 클래스에 대해 좋아요를 취소합니다. (hard delete)")
     public ResultResponse<ClassResponse.ClassId> cancelLike(@RequestParam("classId") Long classId,

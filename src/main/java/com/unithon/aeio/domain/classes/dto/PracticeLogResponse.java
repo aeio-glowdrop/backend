@@ -1,4 +1,4 @@
-package com.unithon.aeio.domain.practice.dto;
+package com.unithon.aeio.domain.classes.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
-package com.unithon.aeio.domain.practice.service;
+package com.unithon.aeio.domain.classes.service;
 
 import com.unithon.aeio.domain.member.entity.Member;
-import com.unithon.aeio.domain.practice.dto.PracticeLogRequest;
-import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.dto.PracticeLogRequest;
+import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
 
 import java.util.List;
 

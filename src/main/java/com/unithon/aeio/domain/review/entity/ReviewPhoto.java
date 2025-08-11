@@ -1,6 +1,6 @@
-package com.unithon.aeio.domain.classes.entity;
+package com.unithon.aeio.domain.review.entity;
 
-import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,34 +11,33 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "member_class")
-@SQLRestriction("deleted_at is NULL")
+@Table(name = "review_photo")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberClass extends BaseTimeEntity {
+public class ReviewPhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_class_id")
+    @Column(name = "review_photo_id")
     private Long id;
 
+    @Column(nullable = false)
+    private String photoUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id")
-    private Classes classes;
+    @JoinColumn(name = "review_id")
+    private Review review;
 }

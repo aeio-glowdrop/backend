@@ -1,4 +1,4 @@
-package com.unithon.aeio.domain.practice.dto;
+package com.unithon.aeio.domain.classes.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

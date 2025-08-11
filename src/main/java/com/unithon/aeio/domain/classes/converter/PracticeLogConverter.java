@@ -1,13 +1,10 @@
-package com.unithon.aeio.domain.practice.converter;
+package com.unithon.aeio.domain.classes.converter;
 
-import com.unithon.aeio.domain.member.dto.MemberResponse;
-import com.unithon.aeio.domain.member.entity.Member;
-import com.unithon.aeio.domain.practice.dto.PracticeLogResponse;
-import com.unithon.aeio.domain.practice.entity.PracticeLog;
+import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.entity.PracticeLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
