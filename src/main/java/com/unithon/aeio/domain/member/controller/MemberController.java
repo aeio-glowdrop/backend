@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.unithon.aeio.global.result.code.MemberResultCode.GET_CURRENT_STREAK;
+
 @RestController
 @RequestMapping("/members")
 @Tag(name = "01. 회원 API", description = "회원 도메인의 API입니다.")
@@ -38,6 +40,13 @@ public class MemberController {
     public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member) {
         return ResultResponse.of(MemberResultCode.GET_NICKNAME,
                 memberService.getNickName(member));
+    }
+
+    @GetMapping("/streak")
+    @Operation(summary = "현재 스트릭 조회", description = "오늘을 기준으로 연속 운동 일수를 반환합니다.")
+    public ResultResponse<MemberResponse.Streak> getStreak(@LoginMember Member member) {
+        return ResultResponse.of(GET_CURRENT_STREAK,
+                memberService.getStreak(member));
     }
 
 

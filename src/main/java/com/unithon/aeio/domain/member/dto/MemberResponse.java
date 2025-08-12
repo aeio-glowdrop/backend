@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public abstract class MemberResponse {
 
     @Getter
@@ -22,5 +24,14 @@ public abstract class MemberResponse {
     public static class NickName {
         private String nickName;
         private long memberId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Streak {
+        private LocalDate today;
+        private int streakDays;
     }
 }
