@@ -21,5 +21,6 @@ public abstract class MemberResponse {
     @AllArgsConstructor
     public static class NickName {
         private String nickName;
+        private long memberId;
     }
 }

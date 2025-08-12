@@ -54,6 +54,7 @@ public class MemberConverter {
         return MemberResponse.NickName
                 .builder()
                 .nickName(member.getNickname())
+                .memberId(member.getId())
                 .build();
     }
 }
