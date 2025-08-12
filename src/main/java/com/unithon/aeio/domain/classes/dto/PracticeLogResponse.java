@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class PracticeLogResponse {
@@ -32,5 +33,30 @@ public abstract class PracticeLogResponse {
     @AllArgsConstructor
     public static class PracticeLogId {
         private Long practiceLogId;
+    }
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PracticeItem {
+        private Long practiceLogId;
+        private Long memberClassId;
+        private Long classId;
+        private String className;
+        private String classType;
+        private Integer count;  //수행 횟수
+        private String feedback;
+        private String expressionlessPhoto; // 무표정 사진 URL
+        private LocalDateTime createdAt; // 기록 생성 시각
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PracticeItemList {
+        private List<PracticeItem> practiceList;
     }
 }

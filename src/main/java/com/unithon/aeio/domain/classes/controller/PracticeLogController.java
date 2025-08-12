@@ -12,16 +12,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_BASIC_LOG;
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_PRESIGNED_URL;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_DATE;
 
 @RestController
 @Slf4j
@@ -50,5 +54,15 @@ public class PracticeLogController {
                                                                           @RequestBody @Valid PracticeLogRequest.BasicLog request) {
         return ResultResponse.of(CREATE_BASIC_LOG,
                 practiceLogService.createBasicLog(classId, member, request));
+    }
+
+    @GetMapping("/by-date")
+    @Operation(summary = "특정 날짜의 운동 목록 조회 API", description = "특정 날짜의 운동 목록을 최신순으로 반환합니다.")
+    public ResultResponse<List<PracticeLogResponse.PracticeItem>> getPracticeListByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @LoginMember Member member) {
+        return ResultResponse.of(GET_PRACTICE_LIST_BY_DATE,
+                practiceLogService.getPracticeListByDate(date, member)
+        );
     }
 }

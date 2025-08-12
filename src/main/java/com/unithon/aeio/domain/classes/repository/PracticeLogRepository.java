@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.classes.repository;
 
 import com.unithon.aeio.domain.classes.entity.PracticeLog;
+import com.unithon.aeio.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -31,4 +33,11 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
                 .map(java.sql.Date::toLocalDate)
                 .toList();
     }
+
+    // member 기준 + 날짜 범위 + 최신순
+    List<PracticeLog> findByMemberClassMemberAndCreatedAtBetweenOrderByCreatedAtDesc(
+            Member member,
+            LocalDateTime startInclusive,
+            LocalDateTime endInclusive
+    );
 }

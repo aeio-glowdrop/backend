@@ -6,6 +6,7 @@ import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.domain.member.entity.Member;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PracticeLogService {
@@ -13,4 +14,5 @@ public interface PracticeLogService {
     PracticeLogResponse.PracticeLogId createBasicLog(Long classId, Member member, PracticeLogRequest.BasicLog request);
     Classes findClass(long classId);
     MemberClass findMemberClass(long memberId, long classId);
+    List<PracticeLogResponse.PracticeItem> getPracticeListByDate(LocalDate date, Member member);
 }
