@@ -13,6 +13,7 @@ public enum ClassResultCode implements ResultCode {
     CANCEL_LIKE(200, "SC003", "성공적으로 좋아요를 취소했습니다."),
     CREATE_PRESIGNED_URL(200, "SC001", "성공적으로 presigned url을 생성했습니다."),
     CREATE_BASIC_LOG(200, "SC002", "기본 클래스의 운동 기록을 성공적으로 생성했습니다."),
+    GET_MY_SUBList(200, "SC003", "구독중인 클래스 목록을 성공적으로 조회했습니다."),
     ;
     private final int status;
     private final String code;

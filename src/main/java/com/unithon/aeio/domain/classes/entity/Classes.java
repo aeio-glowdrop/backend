@@ -34,4 +34,6 @@ public class Classes extends BaseTimeEntity {
     private String className;
     @Column
     private String teacher;
+    @Column
+    private String thumbnailUrl;
 }

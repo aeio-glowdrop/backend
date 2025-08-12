@@ -26,5 +26,6 @@ public abstract class ClassRequest {
         @NotBlank(message = "클래스 이름 입력은 필수입니다.")
         @Size(max = 30, message = "클래스 이름은 최대 30자까지 입력할 수 있습니다.")
         private String className;
+        private String thumbnailUrl;
     }
 }

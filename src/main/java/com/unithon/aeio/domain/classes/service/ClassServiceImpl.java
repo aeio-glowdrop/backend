@@ -15,10 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_LIKED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_SUBSCRIBED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.CLASS_NOT_FOUND;
-import static com.unithon.aeio.global.error.code.ClassErrorCode.MEMBER_CLASS_NOT_FOUND;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.NOT_LIKED;
 
 
@@ -40,6 +41,7 @@ public class ClassServiceImpl implements ClassService {
                 .classType(request.getClassType())
                 .teacher(request.getTeacher())
                 .className(request.getClassName())
+                .thumbnailUrl(request.getThumbnailUrl())
                 .build();
 
         // 저장
@@ -68,7 +70,7 @@ public class ClassServiceImpl implements ClassService {
 
         MemberClass saved = memberClassRepository.save(mc);
 
-        return classConverter.toSubsClass(saved);
+        return classConverter.toSubs(saved);
     }
 
     @Override
@@ -110,6 +112,16 @@ public class ClassServiceImpl implements ClassService {
 
         // 5. 컨버터를 사용해 응답 DTO 생성 및 반환
         return classConverter.toClassId(classes);
+    }
+
+    @Override
+    public ClassResponse.SubsList getMySubsList(Member member) {
+        List<MemberClass> subs = memberClassRepository.findAllByMemberIdOrderByIdDesc(member.getId());
+        List<ClassResponse.SubsClass> items = subs
+                .stream()
+                .map(classConverter::toSubsClass)
+                .toList();
+        return classConverter.toSubsList(items);
     }
 
     private Classes findClass(Long classId) {

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,5 +61,10 @@ public class ClassController {
                 classService.cancelLike(classId, member));
     }
 
-
+    @GetMapping("/subsList")
+    @Operation(summary = "내 구독 클래스 목록 조회 API", description = "현재 로그인 사용자가 구독 중인 클래스 목록을 반환합니다.")
+    public ResultResponse<ClassResponse.SubsList> mySubs(@LoginMember Member member) {
+        return ResultResponse.of(ClassResultCode.GET_MY_SUBList,
+                classService.getMySubsList(member));
+    }
 }

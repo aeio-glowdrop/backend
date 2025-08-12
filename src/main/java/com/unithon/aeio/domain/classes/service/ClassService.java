@@ -9,4 +9,5 @@ public interface ClassService {
     ClassResponse.MemberClassId subsClass(Long classId, Member member);
     ClassResponse.LikeInfo likeClass(Long classId, Member member);
     ClassResponse.ClassId cancelLike(Long classId, Member member);
+    ClassResponse.SubsList getMySubsList(Member member);
 }

@@ -6,6 +6,8 @@ import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ClassConverter {
 
@@ -18,7 +20,7 @@ public class ClassConverter {
     }
 
     // memberClass id만 반환
-    public ClassResponse.MemberClassId toSubsClass(MemberClass mc) {
+    public ClassResponse.MemberClassId toSubs(MemberClass mc) {
         return ClassResponse.MemberClassId
                 .builder()
                 .memberClassId(mc.getId())
@@ -30,6 +32,27 @@ public class ClassConverter {
         return ClassResponse.LikeInfo
                 .builder()
                 .classLikeId(cl.getId())
+                .build();
+    }
+
+    public ClassResponse.SubsClass toSubsClass(MemberClass mc) {
+        Classes c = mc.getClasses();
+        return ClassResponse.SubsClass
+                .builder()
+                .classId(c.getId())
+                .className(c.getClassName())
+                .classType(c.getClassType())
+                .teacher(c.getTeacher())
+                .thumbnailUrl(c.getThumbnailUrl())
+                .subscribedAt(mc.getCreatedAt()) // 구독 시각
+                .build();
+    }
+
+    public ClassResponse.SubsList toSubsList(List<ClassResponse.SubsClass> items) {
+        return ClassResponse.SubsList
+                .builder()
+                .subsList(items)
+                .count(items.size())
                 .build();
     }
 }
