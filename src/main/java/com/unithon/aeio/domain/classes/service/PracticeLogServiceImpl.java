@@ -5,16 +5,16 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.unithon.aeio.domain.classes.entity.Classes;
-import com.unithon.aeio.domain.classes.entity.MemberClass;
-import com.unithon.aeio.domain.classes.repository.ClassRepository;
-import com.unithon.aeio.domain.classes.repository.MemberClassRepository;
-import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.classes.converter.PracticeLogConverter;
 import com.unithon.aeio.domain.classes.dto.PracticeLogRequest;
 import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.entity.Classes;
+import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.domain.classes.entity.PracticeLog;
+import com.unithon.aeio.domain.classes.repository.ClassRepository;
+import com.unithon.aeio.domain.classes.repository.MemberClassRepository;
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
+import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.unithon.aeio.global.error.code.ClassErrorCode.CLASS_NOT_FOUND;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.MEMBER_CLASS_NOT_FOUND;
-import static com.unithon.aeio.global.error.code.JwtErrorCode.CLASS_NOT_FOUND;
 
 @Service
 @Transactional
