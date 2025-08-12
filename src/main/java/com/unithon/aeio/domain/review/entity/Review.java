@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -23,6 +24,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "review")
@@ -49,4 +53,16 @@ public class Review extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_class_id")
     private MemberClass memberClass;
+
+    @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
+    private List<ReviewPhoto> photoList = new ArrayList<>();
+    // 소프트 삭제: 먼저 자식(리뷰포토) 소프트 삭제, 그 다음 본인 삭제
+    public void delete() {
+        if (photoList != null) {
+            for (ReviewPhoto rp : photoList) {
+                rp.delete();
+            }
+        }
+        super.delete();
+    }
 }

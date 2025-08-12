@@ -13,4 +13,10 @@ public class ReviewConverter {
                 .reviewId(review.getId())
                 .build();
     }
+
+    public ReviewResponse.DeleteReview toDeleteReview(Review review) {
+        return ReviewResponse.DeleteReview.builder()
+                .deletedAt(review.getDeletedAt())
+                .build();
+    }
 }

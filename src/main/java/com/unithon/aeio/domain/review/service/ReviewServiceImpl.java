@@ -21,6 +21,8 @@ import java.util.List;
 import static com.unithon.aeio.global.error.code.ReviewErrorCode.RATE_MUST_BE_HALF_STEP;
 import static com.unithon.aeio.global.error.code.ReviewErrorCode.RATE_OUT_OF_RANGE;
 import static com.unithon.aeio.global.error.code.ReviewErrorCode.RATE_REQUIRED;
+import static com.unithon.aeio.global.error.code.ReviewErrorCode.REVIEW_AUTH_ORBIDDEN;
+import static com.unithon.aeio.global.error.code.ReviewErrorCode.REVIEW_NOT_FOUND;
 
 @Service
 @Transactional
@@ -73,6 +75,27 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewConverter.toReviewId(saved);
     }
 
+
+    @Override
+    public ReviewResponse.DeleteReview deleteReview(Long reviewId, Member loginMember) {
+
+        // 리뷰 id 검증
+        Review review = findReview(reviewId);
+
+
+        // 이 리뷰가 로그인한 멤버의 것인지 확인
+        Long ownerId = review.getMemberClass().getMember().getId();
+        if (!ownerId.equals(loginMember.getId())) {
+            throw new BusinessException(REVIEW_AUTH_ORBIDDEN);
+        }
+
+        // 자식 먼저 soft delete → 그 다음 본인 soft delete
+        review.delete();
+
+        // JPA dirty checking으로 반영됨
+        return reviewConverter.toDeleteReview(review);
+    }
+
     private void validateRate(Double rate) {
         if (rate == null) {
             throw new BusinessException(RATE_REQUIRED);
@@ -85,5 +108,10 @@ public class ReviewServiceImpl implements ReviewService {
         if (Math.abs(x2 - Math.round(x2)) > 1e-9) {
             throw new BusinessException(RATE_MUST_BE_HALF_STEP);
         }
+    }
+
+    private Review findReview(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessException(REVIEW_NOT_FOUND));
     }
 }
