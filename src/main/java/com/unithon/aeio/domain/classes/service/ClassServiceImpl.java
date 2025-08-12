@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_LIKED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_SUBSCRIBED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.CLASS_NOT_FOUND;
+import static com.unithon.aeio.global.error.code.ClassErrorCode.MEMBER_CLASS_NOT_FOUND;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.NOT_LIKED;
 
 
@@ -94,11 +95,6 @@ public class ClassServiceImpl implements ClassService {
         return classConverter.toClassLikeId(classLike);
     }
 
-    private Classes findClass(Long classId) {
-        return classRepository.findById(classId)
-                .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
-    }
-
     @Override
     public ClassResponse.ClassId cancelLike(Long classId, Member member) {
 
@@ -114,5 +110,10 @@ public class ClassServiceImpl implements ClassService {
 
         // 5. 컨버터를 사용해 응답 DTO 생성 및 반환
         return classConverter.toClassId(classes);
+    }
+
+    private Classes findClass(Long classId) {
+        return classRepository.findById(classId)
+                .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
     }
 }
