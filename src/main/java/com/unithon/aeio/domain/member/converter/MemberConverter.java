@@ -6,6 +6,8 @@ import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class MemberConverter {
 
@@ -50,6 +52,20 @@ public class MemberConverter {
                 .build();
     }
 
+    public MemberResponse.NickName toNickName(Member member) {
+        return MemberResponse.NickName
+                .builder()
+                .nickName(member.getNickname())
+                .memberId(member.getId())
+                .build();
+    }
 
+    public MemberResponse.Streak toStreak(LocalDate today, int streak) {
+        return MemberResponse.Streak
+                .builder()
+                .today(today)
+                .streakDays(streak)
+                .build();
+    }
 }
 
