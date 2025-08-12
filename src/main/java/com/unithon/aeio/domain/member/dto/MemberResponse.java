@@ -15,4 +15,11 @@ public abstract class MemberResponse {
         private Long memberId;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NickName {
+        private String nickName;
+    }
 }

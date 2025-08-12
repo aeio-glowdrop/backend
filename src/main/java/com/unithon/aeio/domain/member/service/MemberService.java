@@ -6,4 +6,5 @@ import com.unithon.aeio.domain.member.entity.Member;
 
 public interface MemberService {
     MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member);
+    MemberResponse.NickName getNickName(Member member);
 }

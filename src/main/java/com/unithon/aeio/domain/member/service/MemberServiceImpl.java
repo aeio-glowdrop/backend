@@ -45,4 +45,9 @@ public class MemberServiceImpl implements MemberService {
 
         return memberConverter.toMemberId(member);
     }
+
+    @Override
+    public MemberResponse.NickName getNickName(Member member) {
+        return memberConverter.toNickName(member);
+    }
 }

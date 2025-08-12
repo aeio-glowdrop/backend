@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,13 @@ public class MemberController {
                                                                 @LoginMember Member member) {
         return ResultResponse.of(MemberResultCode.CREATE_MEMBER,
                 memberService.createMember(request, member));
+    }
+
+    @GetMapping("/nickName")
+    @Operation(summary = "사용자 닉네임 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
+    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member) {
+        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
+                memberService.getNickName(member));
     }
 
 
