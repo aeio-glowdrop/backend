@@ -1,6 +1,8 @@
 package com.unithon.aeio.domain.classes.converter;
 
 import com.unithon.aeio.domain.classes.dto.PracticeLogResponse;
+import com.unithon.aeio.domain.classes.entity.Classes;
+import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.domain.classes.entity.PracticeLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,25 @@ public class PracticeLogConverter {
         return PracticeLogResponse.PracticeLogId
                 .builder()
                 .practiceLogId(practiceLog.getId())
+                .build();
+    }
+
+    //일일 운동 정보 반환
+    public PracticeLogResponse.PracticeItem toItem(PracticeLog log) {
+        MemberClass memberClass = log.getMemberClass();
+        Classes classes = memberClass.getClasses();
+
+        return PracticeLogResponse.PracticeItem
+                .builder()
+                .practiceLogId(log.getId())
+                .memberClassId(memberClass.getId())
+                .classId(classes.getId())
+                .className(classes.getClassName())
+                .classType(classes.getClassType() != null ? classes.getClassType().name() : null)
+                .count(log.getCount())
+                .feedback(log.getFeedBack())
+                .expressionlessPhoto(log.getExpressionlessPhoto())
+                .createdAt(log.getCreatedAt())
                 .build();
     }
 }

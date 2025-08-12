@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -128,6 +131,21 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
         return practiceLogConverter.toPracticeLogId(log);
 
+    }
+
+    @Override
+    public List<PracticeLogResponse.PracticeItem> getPracticeListByDate(LocalDate date, Member member) {
+        // 날짜 시작 ~ 끝
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        // 해당 멤버의 모든 practiceLog 중 날짜 범위 내의 것만 최신순으로 조회
+        List<PracticeLog> logs = practiceLogRepository
+                .findByMemberClassMemberAndCreatedAtBetweenOrderByCreatedAtDesc(member, startOfDay, endOfDay);
+
+        return logs.stream()
+                .map(practiceLogConverter::toItem)
+                .toList();
     }
 
     @Override
