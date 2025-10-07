@@ -22,7 +22,7 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
         Server server = new Server();
-        server.setUrl("https://aeio.codns.com:443");
+        server.setUrl("https://aeio.online:443");
 
         Server local = new Server();
         local.setUrl("http://localhost:8081");
@@ -37,6 +37,6 @@ public class SwaggerConfig {
         return new Info()
                 .title("aeio 서비스 API")
                 .description("얼굴 요가 aeio")
-                .version("1.0.0");
+                .version("2.0.0");
     }
 }
