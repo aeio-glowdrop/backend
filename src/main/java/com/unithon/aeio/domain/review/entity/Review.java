@@ -1,8 +1,6 @@
 package com.unithon.aeio.domain.review.entity;
 
-import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
-import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

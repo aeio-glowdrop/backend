@@ -128,16 +128,17 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Page<ClassResponse.ClassInfo> getMyLikedClasses(Member member, Pageable pageable) {
-        Page<ClassResponse.ClassInfo> page = classLikeRepository
-                .findLikedClassesByMemberId(member.getId(), pageable);
 
-        // DTO 변환
-        return page.map(p -> ClassResponse.ClassInfo.builder()
-                .classId(p.getClassId())
-                .className(p.getClassName())
-                .thumbnailUrl(p.getThumbnailUrl())
-                .classType(p.getClassType())
-                .teacher(p.getTeacher())
+        // 좋아요한 클래스 엔티티 페이지 조회 (정렬: 좋아요 최신순)
+        Page<Classes> page = classLikeRepository.findLikedClassesByMemberId(member.getId(), pageable);
+
+        // 4) 엔티티 -> DTO 매핑
+        return page.map(c -> ClassResponse.ClassInfo.builder()
+                .classId(c.getId())
+                .className(c.getClassName())
+                .thumbnailUrl(c.getThumbnailUrl())
+                .classType(c.getClassType())
+                .teacher(c.getTeacher())
                 .build());
     }
 
