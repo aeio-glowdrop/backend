@@ -4,6 +4,7 @@ import com.unithon.aeio.domain.classes.dto.ClassResponse;
 import com.unithon.aeio.domain.classes.entity.ClassLike;
 import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,9 +36,9 @@ public class ClassConverter {
                 .build();
     }
 
-    public ClassResponse.SubsClass toSubsClass(MemberClass mc) {
+    public ClassResponse.ClassInfo toSubsClass(MemberClass mc) {
         Classes c = mc.getClasses();
-        return ClassResponse.SubsClass
+        return ClassResponse.ClassInfo
                 .builder()
                 .classId(c.getId())
                 .className(c.getClassName())
@@ -48,11 +49,21 @@ public class ClassConverter {
                 .build();
     }
 
-    public ClassResponse.SubsList toSubsList(List<ClassResponse.SubsClass> items) {
+    public ClassResponse.SubsList toSubsList(List<ClassResponse.ClassInfo> items) {
         return ClassResponse.SubsList
                 .builder()
                 .subsList(items)
                 .count(items.size())
+                .build();
+    }
+
+    public ClassResponse.PagedLikeList toPagedLikeList(Page<ClassResponse.ClassInfo> page) {
+        return ClassResponse.PagedLikeList.builder()
+                .likeClassList(page.getContent())
+                .page(page.getNumber())
+                .totalElements(page.getTotalElements())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
                 .build();
     }
 }

@@ -12,6 +12,8 @@ import com.unithon.aeio.domain.classes.repository.MemberClassRepository;
 import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,11 +119,26 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public ClassResponse.SubsList getMySubsList(Member member) {
         List<MemberClass> subs = memberClassRepository.findAllByMemberIdOrderByIdDesc(member.getId());
-        List<ClassResponse.SubsClass> items = subs
+        List<ClassResponse.ClassInfo> items = subs
                 .stream()
                 .map(classConverter::toSubsClass)
                 .toList();
         return classConverter.toSubsList(items);
+    }
+
+    @Override
+    public Page<ClassResponse.ClassInfo> getMyLikedClasses(Member member, Pageable pageable) {
+        Page<ClassResponse.ClassInfo> page = classLikeRepository
+                .findLikedClassesByMemberId(member.getId(), pageable);
+
+        // DTO 변환
+        return page.map(p -> ClassResponse.ClassInfo.builder()
+                .classId(p.getClassId())
+                .className(p.getClassName())
+                .thumbnailUrl(p.getThumbnailUrl())
+                .classType(p.getClassType())
+                .teacher(p.getTeacher())
+                .build());
     }
 
     private Classes findClass(Long classId) {
