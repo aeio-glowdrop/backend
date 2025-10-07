@@ -13,10 +13,14 @@ import com.unithon.aeio.domain.review.repository.ReviewRepository;
 import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.unithon.aeio.global.error.code.ReviewErrorCode.RATE_MUST_BE_HALF_STEP;
 import static com.unithon.aeio.global.error.code.ReviewErrorCode.RATE_OUT_OF_RANGE;
@@ -108,6 +112,42 @@ public class ReviewServiceImpl implements ReviewService {
         if (Math.abs(x2 - Math.round(x2)) > 1e-9) {
             throw new BusinessException(RATE_MUST_BE_HALF_STEP);
         }
+    }
+
+    @Override
+    public Page<ReviewResponse.ReviewInfo> getClassReviewPage(Long classId, Pageable pageable) {
+
+        // 리뷰 페이징(엔티티) 조회
+        Page<Review> page = reviewRepository.findByMemberClass_Classes_Id(classId, pageable);
+
+        // 2) 리뷰 ID 수집
+        List<Long> reviewIds = page.getContent().stream()
+                .map(Review::getId)
+                .toList();
+
+        // 3) 사진 일괄 로딩 → reviewId -> List<url>
+        Map<Long, List<String>> photoMap = reviewIds.isEmpty()
+                ? Map.of()
+                : reviewPhotoRepository.findByReview_IdIn(reviewIds).stream()
+                .collect(Collectors.groupingBy(
+                        rp -> rp.getReview().getId(),
+                        Collectors.mapping(ReviewPhoto::getPhotoUrl, Collectors.toList())
+                ));
+
+        // 4) 엔티티 → DTO 매핑
+        return page.map(r -> {
+            var mc = r.getMemberClass();
+            var member = mc.getMember(); // EntityGraph로 미리 로딩됨
+            return ReviewResponse.ReviewInfo.builder()
+                    .reviewId(r.getId())
+                    .rate(r.getRate())
+                    .text(r.getText())
+                    .createdAt(r.getCreatedAt())
+                    .photoUrls(photoMap.getOrDefault(r.getId(), List.of()))
+                    .writerMemberId(member.getId())
+                    .writerNickname(member.getNickname())
+                    .build();
+        });
     }
 
     private Review findReview(Long reviewId) {

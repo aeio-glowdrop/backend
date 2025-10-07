@@ -15,6 +15,7 @@ public enum ClassResultCode implements ResultCode {
     CREATE_BASIC_LOG(200, "SC005", "기본 클래스의 운동 기록을 성공적으로 생성했습니다."),
     GET_MY_SUBList(200, "SC006", "구독중인 클래스 목록을 성공적으로 조회했습니다."),
     GET_PRACTICE_LIST_BY_DATE(200, "SC007", "특정 날짜의 운동 리스트를 조회했습니다."),
+    LIKE_LIST(200, "SC008", "사용자가 좋아요한 클래스의 목록을 페이징 조회했습니다."),
     ;
     private final int status;
     private final String code;

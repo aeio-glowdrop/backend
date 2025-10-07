@@ -39,7 +39,7 @@ public abstract class ClassResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SubsClass {
+    public static class ClassInfo {
         private Long classId;
         private String className;
         private String thumbnailUrl;
@@ -53,8 +53,21 @@ public abstract class ClassResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SubsList {
-        private List<SubsClass> subsList;
+        private List<ClassInfo> subsList;
         private int count;
     }
 
+    //좋아요한 리스트 페이징 조회
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PagedLikeList {
+        private Long classId;
+        private List<ClassInfo> likeClassList; //좋아요 누른 클래스 리스트
+        private int page; // 페이지 번호
+        private long totalElements; // 해당 조건에 부합하는 요소의 총 개수
+        private boolean isFirst; // 첫 페이지 여부
+        private boolean isLast; // 마지막 페이지 여부
+    }
 }
