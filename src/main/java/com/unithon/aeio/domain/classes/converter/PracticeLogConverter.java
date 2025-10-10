@@ -63,6 +63,7 @@ public class PracticeLogConverter {
                 .count(log.getCount())
                 .feedback(log.getFeedBack())
                 .expressionlessPhoto(log.getExpressionlessPhoto())
+                .practicePhoto(log.getPracticePhoto())
                 .createdAt(log.getCreatedAt())
                 .build();
     }
