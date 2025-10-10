@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface PracticeLogService {
     List<PracticeLogResponse.PreSignedUrl> getPreSignedUrlList(PracticeLogRequest.PreSignedUrlRequest request);
-    PracticeLogResponse.PracticeLogId createBasicLog(Long classId, Member member, PracticeLogRequest.BasicLog request);
+    PracticeLogResponse.PracticeLogId createPracticeLog(Long classId, Member member, PracticeLogRequest.BasicLog request);
     Classes findClass(long classId);
     MemberClass findMemberClass(long memberId, long classId);
     List<PracticeLogResponse.PracticeItem> getPracticeListByDate(LocalDate date, Member member);

@@ -29,6 +29,7 @@ public abstract class PracticeLogRequest {
     public static class BasicLog {
         @NotEmpty(message = "무표정 사진url은 필수로 입력해야 합니다.")
         private String expressionlessPhoto;
+        private String practicePhoto; //운동 중 사진 저장
         @Size(max=100, message = "최대 100자까지 입력할 수 있습니다.")
         private String feedBack;
         private Integer count;

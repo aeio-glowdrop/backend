@@ -110,7 +110,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     // ---------- 여기까지 presigned
 
     @Override
-    public PracticeLogResponse.PracticeLogId createBasicLog(Long classId, Member member, PracticeLogRequest.BasicLog request) {
+    public PracticeLogResponse.PracticeLogId createPracticeLog(Long classId, Member member, PracticeLogRequest.BasicLog request) {
         // 클래스 존재 확인
         Classes classes = findClass(classId);
 
@@ -122,6 +122,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
                 .builder()
                 .memberClass(memberClass)
                 .expressionlessPhoto(request.getExpressionlessPhoto())
+                .practicePhoto(request.getPracticePhoto())
                 .feedBack(request.getFeedBack())
                 .count(request.getCount())
                 .build();

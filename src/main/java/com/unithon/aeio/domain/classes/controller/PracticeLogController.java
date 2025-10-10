@@ -48,12 +48,12 @@ public class PracticeLogController {
     }
 
     @PostMapping("/basic")
-    @Operation(summary = "베이직 클래스 - 일별 운동정보 저장 API", description = "베이직 클래스를 수행했을 때 일별 운동정보를 저장하는 API 입니다.")
+    @Operation(summary = "일별 운동정보 저장 API", description = "베이직 클래스를 수행했을 때 일별 운동정보를 저장하는 API 입니다.")
     public ResultResponse<PracticeLogResponse.PracticeLogId> uploadPhotos(@RequestParam("classId") Long classId,
                                                                           @LoginMember Member member,
                                                                           @RequestBody @Valid PracticeLogRequest.BasicLog request) {
         return ResultResponse.of(CREATE_BASIC_LOG,
-                practiceLogService.createBasicLog(classId, member, request));
+                practiceLogService.createPracticeLog(classId, member, request));
     }
 
     @GetMapping("/by-date")
