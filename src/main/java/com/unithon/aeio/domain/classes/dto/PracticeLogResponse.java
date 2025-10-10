@@ -49,6 +49,7 @@ public abstract class PracticeLogResponse {
         private Integer count;  //수행 횟수
         private String feedback;
         private String expressionlessPhoto; // 무표정 사진 URL
+        private String practicePhoto; // 연습중 사진 URL
         private LocalDateTime createdAt; // 기록 생성 시각
     }
 
