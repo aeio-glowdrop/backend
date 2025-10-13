@@ -1,5 +1,9 @@
 package com.unithon.aeio.domain.member.entity;
 
+import com.unithon.aeio.domain.classes.entity.ClassLike;
+import com.unithon.aeio.domain.classes.entity.MemberClass;
+import com.unithon.aeio.domain.classes.entity.PracticeLog;
+import com.unithon.aeio.domain.review.entity.Review;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -58,5 +62,20 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private List<Worry> worries = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private List<MemberClass> memberClassList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private List<ClassLike> classLikeList = new ArrayList<>();
 
+    public void delete() {
+        for (MemberClass memberClass : memberClassList) {
+            memberClass.delete();
+        }
+        for (ClassLike classLike : classLikeList) {
+            classLike.delete();
+        }
+        super.delete();
+    }
 }

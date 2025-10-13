@@ -154,6 +154,18 @@ public class ClassServiceImpl implements ClassService {
                 .build());
     }
 
+    @Override
+    public ClassResponse.ClassId deleteClass(Long classId) {
+        //클래스 조회
+        Classes classes = findClass(classId);
+
+        // delete (연관된 memberClass도 함께 삭제됨)
+        classes.delete();
+        classRepository.save(classes);
+
+        return classConverter.toClassId(classes);
+    }
+
     private Classes findClass(Long classId) {
         return classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));

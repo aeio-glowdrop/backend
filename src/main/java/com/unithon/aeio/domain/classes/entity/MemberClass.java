@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.classes.entity;
 
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.review.entity.Review;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +21,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member_class")
@@ -41,4 +44,21 @@ public class MemberClass extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id")
     private Classes classes;
+
+    @OneToMany(mappedBy = "memberClass")
+    @Builder.Default
+    private List<PracticeLog> practiceLogList = new ArrayList<>();
+    @OneToMany(mappedBy = "memberClass")
+    @Builder.Default
+    private List<Review> reviewList = new ArrayList<>();
+
+    public void delete() {
+        for (PracticeLog practiceLog : practiceLogList) {
+            practiceLog.delete();
+        }
+        for (Review review : reviewList) {
+            review.delete();
+        }
+        super.delete();
+    }
 }

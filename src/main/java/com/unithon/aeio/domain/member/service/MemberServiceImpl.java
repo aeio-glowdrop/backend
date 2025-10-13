@@ -1,5 +1,6 @@
 package com.unithon.aeio.domain.member.service;
 
+import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
@@ -8,7 +9,6 @@ import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.member.entity.Worry;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import com.unithon.aeio.domain.member.repository.WorryRepository;
-import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,6 +122,19 @@ public class MemberServiceImpl implements MemberService {
         }
 
         // 4. 멤버 저장
+        memberRepository.save(member);
+
+        return memberConverter.toMemberId(member);
+    }
+
+    @Override
+    public MemberResponse.MemberId deleteMember(Member member) {
+
+        // 연관된 고민부위(Worry)는 hard delete
+        worryRepository.deleteByMemberId(member.getId());
+
+        // soft delete (연관된 memberClass, review 함께 삭제)
+        member.delete();
         memberRepository.save(member);
 
         return memberConverter.toMemberId(member);

@@ -14,4 +14,5 @@ public interface ClassService {
     ClassResponse.SubsList getMySubsList(Member member);
     Page<ClassResponse.ClassInfo> getMyLikedClasses(Member member, Pageable pageable);
     ClassResponse.MemberClassId unsubsClass(Long classId, Member member);
+    ClassResponse.ClassId deleteClass(Long classId);
 }
