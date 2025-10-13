@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,16 @@ public class MemberController {
                                                                 @LoginMember Member member) {
         return ResultResponse.of(MemberResultCode.CREATE_MEMBER,
                 memberService.createMember(request, member));
+    }
+
+    @PatchMapping
+    @Operation(summary = "회원정보 수정 API", description = "회원 닉네임/성별/고민부위를 부분 수정합니다.")
+    public ResultResponse<MemberResponse.MemberId> updateMember(
+            @RequestBody @Valid MemberRequest.UpdateMemberInfo request,
+            @LoginMember Member member
+    ) {
+        return ResultResponse.of(MemberResultCode.UPDATE_MEMBER,
+                memberService.updateMember(request, member));
     }
 
     @GetMapping("/nickName")

@@ -1,7 +1,6 @@
 package com.unithon.aeio.domain.member.service;
 
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
-import com.unithon.aeio.domain.classes.service.PracticeLogService;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
@@ -9,6 +8,7 @@ import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.member.entity.Worry;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import com.unithon.aeio.domain.member.repository.WorryRepository;
+import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,5 +87,43 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return memberConverter.toStreak(today, streak);
+    }
+
+    @Override
+    @Transactional
+    public MemberResponse.MemberId updateMember(MemberRequest.UpdateMemberInfo request, Member member) {
+
+        // 닉네임
+        if (request.getNickName() != null) {
+            String nick = request.getNickName().trim();
+            member.setNickname(nick);
+        }
+
+        // 성별
+        if (request.getGender() != null) {
+            member.setGender(request.getGender());
+        }
+
+        // 고민부위 (전체 교체)
+        if (request.getWorryList() != null) {
+            List<String> list = request.getWorryList();
+
+            // 기존 전부 삭제 후 새로 저장
+            worryRepository.deleteByMemberId(member.getId());
+
+            List<Worry> newWorry = list.stream()
+                    .map(name -> Worry.builder()
+                            .name(name)
+                            .member(member)
+                            .build())
+                    .toList();
+
+            worryRepository.saveAll(newWorry);
+        }
+
+        // 4. 멤버 저장
+        memberRepository.save(member);
+
+        return memberConverter.toMemberId(member);
     }
 }
