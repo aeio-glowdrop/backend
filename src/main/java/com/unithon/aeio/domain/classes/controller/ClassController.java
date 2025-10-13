@@ -47,9 +47,17 @@ public class ClassController {
     @PostMapping("/subs")
     @Operation(summary = "클래스 구독 API", description = "사용자가 클래스를 구독하는 API입니다.")
     public ResultResponse<ClassResponse.MemberClassId> subsClass(@RequestParam("classId") Long classId,
-                                                             @LoginMember Member member) {
+                                                                @LoginMember Member member) {
         return ResultResponse.of(ClassResultCode.SUBSCRIBE_CLASS,
                 classService.subsClass(classId, member));
+    }
+
+    @DeleteMapping("/subs")
+    @Operation(summary = "클래스 구독 취소 API", description = "사용자가 특정 클래스를 구독 취소합니다.")
+    public ResultResponse<ClassResponse.MemberClassId> unSubsClass(@RequestParam("classId") Long classId,
+                                                                   @LoginMember Member member) {
+        return ResultResponse.of(ClassResultCode.UNSUBSCRIBE_CLASS,
+                classService.unsubsClass(classId, member));
     }
 
     @PostMapping("/like")
