@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -15,6 +16,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "classes")
@@ -37,4 +41,21 @@ public class Classes extends BaseTimeEntity {
     private String teacher;
     @Column
     private String thumbnailUrl;
+
+    @OneToMany(mappedBy = "classes")
+    @Builder.Default
+    private List<MemberClass> memberClassList = new ArrayList<>();
+    @OneToMany(mappedBy = "classes")
+    @Builder.Default
+    private List<ClassLike> classLikeList = new ArrayList<>();
+
+    public void delete() {
+        for (MemberClass memberClass : memberClassList) {
+            memberClass.delete();
+        }
+        for (ClassLike classLike : classLikeList) {
+            classLike.delete();
+        }
+        super.delete();
+    }
 }

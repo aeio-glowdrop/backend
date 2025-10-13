@@ -53,11 +53,11 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<ReviewPhoto> photoList = new ArrayList<>();
-    // 소프트 삭제: 먼저 자식(리뷰포토) 소프트 삭제, 그 다음 본인 삭제
+
     public void delete() {
         if (photoList != null) {
-            for (ReviewPhoto rp : photoList) {
-                rp.delete();
+            for (ReviewPhoto reviewPhoto : photoList) {
+                reviewPhoto.delete();
             }
         }
         super.delete();
