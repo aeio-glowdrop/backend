@@ -22,6 +22,7 @@ import java.util.List;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_LIKED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.ALREADY_SUBSCRIBED;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.CLASS_NOT_FOUND;
+import static com.unithon.aeio.global.error.code.ClassErrorCode.MEMBER_CLASS_NOT_FOUND;
 import static com.unithon.aeio.global.error.code.ClassErrorCode.NOT_LIKED;
 
 
@@ -73,6 +74,17 @@ public class ClassServiceImpl implements ClassService {
         MemberClass saved = memberClassRepository.save(mc);
 
         return classConverter.toSubs(saved);
+    }
+
+    @Override
+    @Transactional
+    public ClassResponse.MemberClassId unsubsClass(Long classId, Member member) {
+        // 구독 존재 확인 (없으면 에러)
+        MemberClass mc = findMemberClass(member.getId(), classId);
+        // 삭제 (hard delete)
+        memberClassRepository.delete(mc);
+        // id만 반환
+        return classConverter.toSubs(mc);
     }
 
     @Override
@@ -145,5 +157,10 @@ public class ClassServiceImpl implements ClassService {
     private Classes findClass(Long classId) {
         return classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+    }
+
+    private MemberClass findMemberClass(Long memberId, Long classId) {
+        return memberClassRepository.findByMemberIdAndClassesId(memberId, classId)
+                .orElseThrow(() -> new BusinessException(MEMBER_CLASS_NOT_FOUND));
     }
 }
