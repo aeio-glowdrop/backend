@@ -1,5 +1,6 @@
 package com.unithon.aeio.domain.member.controller;
 
+import com.unithon.aeio.domain.classes.dto.ClassResponse;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.entity.Member;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.unithon.aeio.global.result.code.MemberResultCode.DELETE_MEMBER;
 import static com.unithon.aeio.global.result.code.MemberResultCode.GET_CURRENT_STREAK;
 
 @RestController
@@ -58,6 +61,14 @@ public class MemberController {
     public ResultResponse<MemberResponse.Streak> getStreak(@LoginMember Member member) {
         return ResultResponse.of(GET_CURRENT_STREAK,
                 memberService.getStreak(member));
+    }
+
+    // 멤버 삭제
+    @DeleteMapping("")
+    @Operation(summary = "클래스 삭제 API", description = "멤버를 soft delete 처리합니다.")
+    public ResultResponse<MemberResponse.MemberId> deleteMember(@LoginMember Member member) {
+        return ResultResponse.of(DELETE_MEMBER,
+                memberService.deleteMember(member));
     }
 
 

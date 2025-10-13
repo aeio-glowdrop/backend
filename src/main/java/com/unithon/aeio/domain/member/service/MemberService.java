@@ -11,4 +11,5 @@ public interface MemberService {
     MemberResponse.NickName getNickName(Member member);
     MemberResponse.Streak getStreak(Member member);
     MemberResponse.MemberId updateMember(MemberRequest.UpdateMemberInfo request, Member member);
+    MemberResponse.MemberId deleteMember(Member member);
 }
