@@ -11,7 +11,7 @@ on:
 # 본인이 설정한 값을 여기서 채워넣는다.
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: aeio-cicd-bucket
+  S3_BUCKET_NAME: aeio-cicd-bucket2
   CODE_DEPLOY_APPLICATION_NAME: aeio-cicd
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: aeio-group
 
