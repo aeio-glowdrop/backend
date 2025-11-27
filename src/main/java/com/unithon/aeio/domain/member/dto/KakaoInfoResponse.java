@@ -8,7 +8,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public class KakaoInfoResponse {
-    private Long authId;
+    private String authId;
     private String name;
     private String email;
 
@@ -18,7 +18,7 @@ public class KakaoInfoResponse {
         // attributes 맵에서 "id" 키의 값이 존재하면 이를 Long 타입으로 변환하여 authId 필드에 저장하고,
         // 존재하지 않으면 null로 설정
         this.authId = attributes.get("id") != null
-                ? Long.valueOf(attributes.get("id").toString())
+                ? attributes.get("id").toString()
                 : null;
 
         // attributes 맵에서 "email" 키의 값이 존재하면 이를 String으로 변환하여 email 필드에 저장하고,

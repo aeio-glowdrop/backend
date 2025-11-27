@@ -19,7 +19,7 @@ public abstract class  OauthResponse {
     @Builder
     @AllArgsConstructor
     public static class KakaoInfo {
-        private Long authId;
+        private String authId;
         private String name; //카카오 설정 이름
         private String email; //카카오 설정 이메일
         private String refreshToken;

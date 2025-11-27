@@ -6,7 +6,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,8 +15,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.Random;
 
@@ -32,7 +31,7 @@ public class JwtTokenService implements InitializingBean {
     private final long accessTokenExpirationInSeconds; //액세스 토큰의 만료 시간(초단위)
     private final long refreshTokenExpirationInSeconds;
     private final String secretKey; //비밀 키
-    private static Key key; //암호화 키 객체
+    private static SecretKey key; //암호화 키 객체
 
     // 생성자: JWT 토큰의 만료 시간 및 비밀 키를 설정
     public JwtTokenService(
@@ -74,16 +73,15 @@ public class JwtTokenService implements InitializingBean {
     public String createToken(String payload, long expireLength){
 
         // JWT 클레임을 설정. payload는 subject로 설정됨 (토큰이 발급된 대상인 'sub'클레임을 뜻함)
-        Claims claims = Jwts.claims().setSubject(payload);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expireLength);
 
         // JWT 토큰을 생성하고 서명한 후, 문자열로 반환
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .subject(payload)
+                .issuedAt(now)
+                .expiration(validity)
+                .signWith(key, Jwts.SIG.HS256)  // 🔥 추천 방식
                 .compact();
     }
 
@@ -91,11 +89,11 @@ public class JwtTokenService implements InitializingBean {
     public String getPayload(String token){
         try{
             // 주어진 토큰을 파싱하고, 그 토큰의 subject (payload)를 반환
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
+            return Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
+                    .parseSignedClaims((token))
+                    .getPayload()
                     .getSubject();
         }catch (ExpiredJwtException e){
             // 토큰이 만료되었을 때, 만료된 토큰의 subject를 반환
@@ -112,18 +110,19 @@ public class JwtTokenService implements InitializingBean {
     public boolean validateToken(String token){
         try{
             // 토큰을 파싱하고, 만료되지 않았는지 확인
-            Jws<Claims> claimsJws = Jwts
-                    .parserBuilder()
-                    .setSigningKey(key)
+            Jws<Claims> jws = Jwts
+                    .parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             // 만료 시간이 현재시간 이전이면 true -> 만료되었단 뜻이므로 반대로 false를 반환. 만료되지 않았으면 ture
-            return !claimsJws.getBody().getExpiration().before(new Date());
+            return !jws.getPayload().getExpiration().before(new Date());
         }catch (JwtException | IllegalArgumentException exception){
             // 토큰이 유효하지 않으면 false를 반환
             return false;
         }
     }
+
 
     // 비밀 키를 Base64로 인코딩하는 메소드
     private String encodeBase64SecretKey(String secretKey) {
@@ -131,20 +130,18 @@ public class JwtTokenService implements InitializingBean {
     }
 
     // Base64로 인코딩된 비밀 키에서 Key 객체를 생성하는 메소드
-    private Key getKeyFromBase64EncodedKey(String base64EncodedSecretKey) {
+    private SecretKey getKeyFromBase64EncodedKey(String base64EncodedSecretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(base64EncodedSecretKey);
-
-        Key key = Keys.hmacShaKeyFor(keyBytes);
-
-        return key;
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 클라이언트의 쿠키에 리프레시 토큰을 저장하는 메소드
     public void addRefreshTokenToCookie(String refreshToken, HttpServletResponse response) {
-        Long age = refreshTokenExpirationInSeconds;
+        int maxAge = (int) (refreshTokenExpirationInSeconds / 1000);
+
         Cookie cookie = new Cookie("refresh_token", refreshToken);
         cookie.setPath("/");
-        cookie.setMaxAge(age.intValue());
+        cookie.setMaxAge(maxAge);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
     }

@@ -1,6 +1,5 @@
 package com.unithon.aeio.domain.member.controller;
 
-import com.unithon.aeio.domain.classes.dto.ClassResponse;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.entity.Member;

@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.member.converter;
 
 
+import com.unithon.aeio.domain.member.dto.AppleInfoResponse;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
@@ -18,6 +19,13 @@ public class MemberConverter {
                 .name(kakaoInfo.getName()) //카카오톡 이름
                 .email(kakaoInfo.getEmail())
                 .refreshToken(kakaoInfo.getRefreshToken()) // UserDTO의 리프레시 토큰을 User 엔티티의 리프레시 토큰으로 설정
+                .build();
+    }
+
+    public Member toAppleUserEntity(AppleInfoResponse appleInfo) {
+        return Member.builder()
+                .authId(appleInfo.getAuthId())   // String
+                .email(appleInfo.getEmail())     // null일 수도 있음
                 .build();
     }
 
