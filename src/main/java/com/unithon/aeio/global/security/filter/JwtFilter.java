@@ -51,8 +51,7 @@ public class JwtFilter extends GenericFilterBean {
         if (StringUtils.hasText(jwt) && jwtTokenService.validateToken(jwt)) {
 
             // JWT에서 사용자 authID를 추출
-            Long authId = Long.valueOf(jwtTokenService.getPayload(jwt)); // 토큰에 있는 authId 가져오기
-
+            String authId = jwtTokenService.getPayload(jwt); // 토큰에 있는 authId 가져오기
 
             // 추출한 사용자 ID로 데이터베이스에서 사용자 정보를 조회
             Member member = memberRepository.findByAuthId(authId)

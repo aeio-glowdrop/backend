@@ -20,6 +20,6 @@ public abstract class OauthRequest {
     @AllArgsConstructor
     public static class LoginRequest {
         @NotNull(message = "카카오에서 제공한 회원 번호를 필수로 입력해야 합니다.")
-        private Long authId;
+        private String authId;
     }
 }

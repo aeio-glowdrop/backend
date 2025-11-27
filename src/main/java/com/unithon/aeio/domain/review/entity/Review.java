@@ -51,6 +51,7 @@ public class Review extends BaseTimeEntity {
     @JoinColumn(name = "member_class_id")
     private MemberClass memberClass;
 
+    @Builder.Default
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
     private List<ReviewPhoto> photoList = new ArrayList<>();
 

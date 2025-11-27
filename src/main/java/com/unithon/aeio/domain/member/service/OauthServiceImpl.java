@@ -94,9 +94,9 @@ public class OauthServiceImpl implements OauthService {
 
     @Override
     //액세스토큰, 리프레시토큰 생성하고 DB에 저장
-    public String getTokens(Long id, HttpServletResponse response) {
+    public String getTokens(String id, HttpServletResponse response) {
         //사용자의 ID를 바탕으로 Access Token을 생성
-        final String accessToken = jwtTokenService.createAccessToken(id.toString());
+        final String accessToken = jwtTokenService.createAccessToken(id);
         //Refresh Token을 생성
         final String refreshToken = jwtTokenService.createRefreshToken();
 
@@ -132,5 +132,4 @@ public class OauthServiceImpl implements OauthService {
         // 유효한 Refresh Token을 기반으로 새로운 Access Token을 생성하여 반환
         return jwtTokenService.createAccessToken(member.getAuthId().toString());
     }
-
 }
