@@ -2,6 +2,8 @@ package com.unithon.aeio.domain.member.service;
 
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
+import com.unithon.aeio.domain.member.dto.OauthRequest;
+import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
 
 import java.time.LocalDate;
@@ -12,4 +14,5 @@ public interface MemberService {
     MemberResponse.Streak getStreak(Member member);
     MemberResponse.MemberId updateMember(MemberRequest.UpdateMemberInfo request, Member member);
     MemberResponse.MemberId deleteMember(Member member);
+    OauthResponse.CheckMemberRegistration saveUserAgreements(Member member, OauthRequest.AgreementRequest request);
 }

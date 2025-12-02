@@ -5,15 +5,20 @@ import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
+import com.unithon.aeio.domain.member.dto.OauthRequest;
+import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.UserAgreement;
 import com.unithon.aeio.domain.member.entity.Worry;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
+import com.unithon.aeio.domain.member.repository.UserAgreementRepository;
 import com.unithon.aeio.domain.member.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +30,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberConverter memberConverter;
     private final WorryRepository worryRepository;
     private final PracticeLogRepository practiceLogRepository;
+    private final UserAgreementRepository userAgreementRepository;
 
     @Override
     public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member) {
@@ -138,5 +144,42 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
 
         return memberConverter.toMemberId(member);
+    }
+
+    @Override
+    public OauthResponse.CheckMemberRegistration saveUserAgreements(Member member, OauthRequest.AgreementRequest request) {
+
+        // @Valid 통과 이후
+
+        // 마케팅 동의: null이면 false로 처리
+        boolean marketingAgree = Boolean.TRUE.equals(request.getMarketingAgree());
+        LocalDateTime now = LocalDateTime.now();
+
+        UserAgreement userAgreement = userAgreementRepository.findByMember(member)
+                .orElseGet(() -> UserAgreement.builder()
+                        .member(member)
+                        .build()
+                );
+
+        // 버전 저장
+        userAgreement.setTermsVersion(request.getTermsVersion());
+        userAgreement.setPrivacyVersion(request.getPrivacyVersion());
+
+        // 동의 여부 (Boolean)
+        userAgreement.setTermsAgree(request.getTermsAgree());
+        userAgreement.setPrivacyAgree(request.getPrivacyAgree());
+        userAgreement.setPersonalInfoAgree(request.getPersonalInfoAgree());
+        userAgreement.setAgeOver14At(request.getAgeOver14());
+
+        // 선택 동의 (null → false)
+        userAgreement.setMarketingAgree(marketingAgree);
+
+        // 동의 시각
+        userAgreement.setAgreedAt(now);
+
+        userAgreementRepository.save(userAgreement);
+
+        // 응답은 항상 true 고정
+        return new OauthResponse.CheckMemberRegistration(true);
     }
 }

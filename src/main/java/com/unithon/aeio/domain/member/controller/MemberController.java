@@ -2,8 +2,11 @@ package com.unithon.aeio.domain.member.controller;
 
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
+import com.unithon.aeio.domain.member.dto.OauthRequest;
+import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.member.service.MemberService;
+import com.unithon.aeio.global.error.BusinessException;
 import com.unithon.aeio.global.result.ResultResponse;
 import com.unithon.aeio.global.result.code.MemberResultCode;
 import com.unithon.aeio.global.security.annotation.LoginMember;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.unithon.aeio.global.error.code.GlobalErrorCode.UNAUTHORIZED;
+import static com.unithon.aeio.global.result.code.MemberResultCode.AGREE;
 import static com.unithon.aeio.global.result.code.MemberResultCode.DELETE_MEMBER;
 import static com.unithon.aeio.global.result.code.MemberResultCode.GET_CURRENT_STREAK;
 
@@ -70,5 +75,16 @@ public class MemberController {
                 memberService.deleteMember(member));
     }
 
+    @PostMapping("/agreements")
+    @Operation(summary = "이용정보 약관 동의 API", description = "이용정보 약관에 동의하는 API입니다.")
+    public ResultResponse<OauthResponse.CheckMemberRegistration> saveAgreements(@LoginMember Member member,
+                                                                                @Valid @RequestBody OauthRequest.AgreementRequest request
+    ) throws BusinessException {
 
+        if (member == null) {
+            throw new BusinessException(UNAUTHORIZED);
+        }
+
+        return ResultResponse.of(AGREE, memberService.saveUserAgreements(member, request));
+    }
 }
