@@ -3,9 +3,12 @@ package com.unithon.aeio.domain.member.controller;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.OauthRequest;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
+import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.member.service.AppleOauthService;
 import com.unithon.aeio.domain.member.service.OauthService;
+import com.unithon.aeio.global.error.BusinessException;
 import com.unithon.aeio.global.result.ResultResponse;
+import com.unithon.aeio.global.security.annotation.LoginMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.unithon.aeio.global.error.code.GlobalErrorCode.UNAUTHORIZED;
+import static com.unithon.aeio.global.result.code.MemberResultCode.AGREE;
 import static com.unithon.aeio.global.result.code.MemberResultCode.CHECK_MEMBER_REGISTRATION;
 import static com.unithon.aeio.global.result.code.MemberResultCode.LOGIN;
 import static com.unithon.aeio.global.result.code.MemberResultCode.REFRESH_TOKEN;
@@ -59,4 +64,16 @@ public class OauthController {
         return ResultResponse.of(LOGIN, appleOauthService.loginApple(code, response));
     }
 
+    @PostMapping("/agreements")
+    @Operation(summary = "이용정보 약관 동의 API", description = "이용정보 약관에 동의하는 API입니다.")
+    public ResultResponse<OauthResponse.CheckMemberRegistration> saveAgreements(@LoginMember Member member,
+                                                                                @Valid @RequestBody OauthRequest.AgreementRequest request
+    ) throws BusinessException {
+
+        if (member == null) {
+            throw new BusinessException(UNAUTHORIZED);
+        }
+
+        return ResultResponse.of(AGREE, oauthService.saveUserAgreements(member, request));
+    }
 }

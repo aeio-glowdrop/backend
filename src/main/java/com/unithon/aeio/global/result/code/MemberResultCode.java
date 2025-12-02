@@ -15,6 +15,7 @@ public enum MemberResultCode implements ResultCode {
     GET_CURRENT_STREAK(200, "SM005", "성공적으로 현재 스트릭 수를 조회했습니다."),
     UPDATE_MEMBER(200, "SM006", "성공적으로 멤버 정보를 수정했습니다."),
     DELETE_MEMBER(200, "SM007", "성공적으로 멤버를 삭제했습니다."),
+    AGREE(200, "SM008", "성공적으로 약관에 동의하였습니다."),
     ;
     private final int status;
     private final String code;

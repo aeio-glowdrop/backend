@@ -5,7 +5,9 @@ import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.OauthRequest;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.UserAgreement;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
+import com.unithon.aeio.domain.member.repository.UserAgreementRepository;
 import com.unithon.aeio.global.error.BusinessException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static com.unithon.aeio.global.error.code.JwtErrorCode.INVALID_REFRESH_TOKEN;
@@ -29,6 +32,7 @@ public class OauthServiceImpl implements OauthService {
     private final JwtTokenService jwtTokenService;
     private final MemberRepository memberRepository;
     private final MemberConverter memberConverter;
+    private final UserAgreementRepository userAgreementRepository;
 
     @Override
     public OauthResponse.ServerAccessTokenInfo login(OauthRequest.FrontAccessTokenInfo tokenRequest, HttpServletResponse response) {
@@ -131,5 +135,42 @@ public class OauthServiceImpl implements OauthService {
 
         // 유효한 Refresh Token을 기반으로 새로운 Access Token을 생성하여 반환
         return jwtTokenService.createAccessToken(member.getAuthId().toString());
+    }
+
+    @Override
+    public OauthResponse.CheckMemberRegistration saveUserAgreements(Member member, OauthRequest.AgreementRequest request) {
+
+        // @Valid 통과 이후
+
+        // 마케팅 동의: null이면 false로 처리
+        boolean marketingAgree = Boolean.TRUE.equals(request.getMarketingAgree());
+        LocalDateTime now = LocalDateTime.now();
+
+        UserAgreement userAgreement = userAgreementRepository.findByMember(member)
+                .orElseGet(() -> UserAgreement.builder()
+                        .member(member)
+                        .build()
+                );
+
+        // 버전 저장
+        userAgreement.setTermsVersion(request.getTermsVersion());
+        userAgreement.setPrivacyVersion(request.getPrivacyVersion());
+
+        // 동의 여부 (Boolean)
+        userAgreement.setTermsAgree(request.getTermsAgree());
+        userAgreement.setPrivacyAgree(request.getPrivacyAgree());
+        userAgreement.setPersonalInfoAgree(request.getPersonalInfoAgree());
+        userAgreement.setAgeOver14At(request.getAgeOver14());
+
+        // 선택 동의 (null → false)
+        userAgreement.setMarketingAgree(marketingAgree);
+
+        // 동의 시각
+        userAgreement.setAgreedAt(now);
+
+        userAgreementRepository.save(userAgreement);
+
+        // 응답은 항상 true 고정
+        return new OauthResponse.CheckMemberRegistration(true);
     }
 }
