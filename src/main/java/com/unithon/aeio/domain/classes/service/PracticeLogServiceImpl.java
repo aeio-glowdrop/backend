@@ -178,6 +178,16 @@ public class PracticeLogServiceImpl implements PracticeLogService {
                 .toList();
     }
 
+    // "운동한 날짜 리스트" 반환
+    @Override
+    public List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member) {
+        List<LocalDate> dates = practiceLogRepository.findDistinctPracticeDatesByMember(member);
+
+        return dates.stream()
+                .map(PracticeLogResponse.PracticeDate::from)
+                .toList();
+    }
+
     @Override
     public Classes findClass(long classId) {
         return classRepository.findById(classId)
