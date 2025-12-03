@@ -130,7 +130,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     private Date getPreSignedUrlExpirationForGet() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 10; // 10분
+        expTimeMillis += 1000 * 60 * 60; // 1시간
         expiration.setTime(expTimeMillis);
         return expiration;
     }
