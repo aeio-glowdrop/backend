@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,5 +60,15 @@ public abstract class PracticeLogResponse {
     @AllArgsConstructor
     public static class PracticeItemList {
         private List<PracticeItem> practiceList;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PracticeDate {
+        private LocalDate date;
+
+        public static PracticeDate from(LocalDate date) {
+            return new PracticeDate(date);
+        }
     }
 }

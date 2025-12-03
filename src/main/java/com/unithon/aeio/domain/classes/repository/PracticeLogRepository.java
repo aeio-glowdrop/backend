@@ -40,4 +40,13 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
             LocalDateTime startInclusive,
             LocalDateTime endInclusive
     );
+
+    // 해당 멤버가 운동한 "날짜"만 distinct로 조회
+    @Query("""
+        select distinct function('date', p.createdAt)
+        from PracticeLog p
+        where p.memberClass.member = :member
+        order by function('date', p.createdAt) desc
+    """)
+    List<LocalDate> findDistinctPracticeDatesByMember(@Param("member") Member member);
 }

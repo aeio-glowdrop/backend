@@ -138,12 +138,21 @@ public class ReviewServiceImpl implements ReviewService {
         return page.map(r -> {
             var mc = r.getMemberClass();
             var member = mc.getMember(); // EntityGraph로 미리 로딩됨
+
+            // 이 리뷰에 연결된 "원본 S3 URL" 목록
+            List<String> rawPhotoUrls = photoMap.getOrDefault(r.getId(), List.of());
+
+            // 각 URL을 "조회용 presigned GET URL"로 변환
+            List<String> signedPhotoUrls = rawPhotoUrls.stream()
+                    .map(practiceLogService::generateGetPresignedUrlFromPhotoUrl)
+                    .toList();
+
             return ReviewResponse.ReviewInfo.builder()
                     .reviewId(r.getId())
                     .rate(r.getRate())
                     .text(r.getText())
                     .createdAt(r.getCreatedAt())
-                    .photoUrls(photoMap.getOrDefault(r.getId(), List.of()))
+                    .photoUrls(signedPhotoUrls)
                     .writerMemberId(member.getId())
                     .writerNickname(member.getNickname())
                     .build();

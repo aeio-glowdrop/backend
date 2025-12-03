@@ -25,6 +25,7 @@ import java.util.List;
 
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_BASIC_LOG;
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_PRESIGNED_URL;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_DATE;
 
 @RestController
@@ -63,6 +64,14 @@ public class PracticeLogController {
             @LoginMember Member member) {
         return ResultResponse.of(GET_PRACTICE_LIST_BY_DATE,
                 practiceLogService.getPracticeListByDate(date, member)
+        );
+    }
+
+    @GetMapping("/date-list")
+    @Operation(summary = "특정 멤버의 운동 날짜 조회 API", description = "특정 멤버의 운동 날짜 리스트 반환")
+    public ResultResponse<List<PracticeLogResponse.PracticeDate>> getPracticeDates(@LoginMember Member member) {
+        return ResultResponse.of(GET_PRACTICE_LIST,
+                practiceLogService.getPracticeDateList(member)
         );
     }
 }

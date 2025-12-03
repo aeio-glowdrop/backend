@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,6 +106,36 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         return expiration;
     }
 
+    // 사진 조회용(GET) PreSigned URL 생성
+    @Override
+    public String generateGetPresignedUrlFromPhotoUrl(String photoUrl) {
+        try {
+            // photoUrl에서 key만 추출
+            URI uri = URI.create(photoUrl);
+            String key = uri.getPath().substring(1); // 맨 앞 '/' 제거
+
+            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(BUCKET_NAME, key)
+                    .withMethod(HttpMethod.GET) // GET (조회용)
+                    .withExpiration(getPreSignedUrlExpirationForGet()); // 3분짜리든, 따로 duration 만들어도 됨
+
+            URL url = amazonS3.generatePresignedUrl(request);
+            return url.toString();
+        } catch (Exception e) {
+            log.error("[S3] GET presigned URL 생성 실패. photoUrl={}", photoUrl, e);
+            throw new RuntimeException("S3 Presigned URL 생성 실패");
+        }
+    }
+
+    // Get용 PreSigned URL 유효 기간 설정
+    private Date getPreSignedUrlExpirationForGet() {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 60; // 1시간
+        expiration.setTime(expTimeMillis);
+        return expiration;
+    }
+
+
     // ---------- 여기까지 presigned
 
     @Override
@@ -144,6 +175,16 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
         return logs.stream()
                 .map(practiceLogConverter::toItem)
+                .toList();
+    }
+
+    // "운동한 날짜 리스트" 반환
+    @Override
+    public List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member) {
+        List<LocalDate> dates = practiceLogRepository.findDistinctPracticeDatesByMember(member);
+
+        return dates.stream()
+                .map(PracticeLogResponse.PracticeDate::from)
                 .toList();
     }
 
