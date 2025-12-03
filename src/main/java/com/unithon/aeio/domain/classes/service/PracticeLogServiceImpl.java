@@ -90,12 +90,10 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
     // 사진 업로드용(PUT) PreSigned URL 생성
     private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String fileName) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileName)
+
+        return new GeneratePresignedUrlRequest(bucket, fileName)
                 .withMethod(HttpMethod.PUT)
                 .withExpiration(getPreSignedUrlExpiration());
-        generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
-
-        return generatePresignedUrlRequest;
     }
 
     // PreSigned URL 유효 기간 설정
