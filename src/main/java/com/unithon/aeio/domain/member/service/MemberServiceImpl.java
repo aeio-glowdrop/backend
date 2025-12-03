@@ -136,12 +136,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse.MemberId deleteMember(Member member) {
 
-        // 연관된 고민부위(Worry)는 hard delete
+        // 연관된 고민부위(Worry) hard delete
         worryRepository.deleteByMemberId(member.getId());
-
-        // soft delete (연관된 memberClass, review 함께 삭제)
-        member.delete();
-        memberRepository.save(member);
+        memberRepository.delete(member);
 
         return memberConverter.toMemberId(member);
     }

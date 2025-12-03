@@ -5,6 +5,8 @@ import com.unithon.aeio.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class ReviewConverter {
     // class Id만 반환
@@ -15,9 +17,9 @@ public class ReviewConverter {
                 .build();
     }
 
-    public ReviewResponse.DeleteReview toDeleteReview(Review review) {
+    public ReviewResponse.DeleteReview toDeleteReview(Long ownerId) {
         return ReviewResponse.DeleteReview.builder()
-                .deletedAt(review.getDeletedAt())
+                .ownerId(ownerId)
                 .build();
     }
 

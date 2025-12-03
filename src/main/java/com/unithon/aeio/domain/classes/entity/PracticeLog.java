@@ -20,7 +20,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "practice_log")
-@SQLRestriction("deleted_at is NULL")
 @Getter
 @Setter
 @Builder
@@ -45,5 +44,4 @@ public class PracticeLog extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_class_id")
     private MemberClass memberClass;
-
 }

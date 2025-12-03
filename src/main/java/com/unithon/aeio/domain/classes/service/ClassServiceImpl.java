@@ -159,9 +159,8 @@ public class ClassServiceImpl implements ClassService {
         //클래스 조회
         Classes classes = findClass(classId);
 
-        // delete (연관된 memberClass도 함께 삭제됨)
-        classes.delete();
-        classRepository.save(classes);
+        // hard delete
+        classRepository.delete(classes);
 
         return classConverter.toClassId(classes);
     }

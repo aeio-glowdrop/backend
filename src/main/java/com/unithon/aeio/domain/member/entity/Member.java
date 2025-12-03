@@ -29,7 +29,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "member")
-@SQLRestriction("deleted_at is NULL")
 @Getter
 @Setter
 @Builder
@@ -59,23 +58,13 @@ public class Member extends BaseTimeEntity {
     @Column
     private Gender gender;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Worry> worries = new ArrayList<>();
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<MemberClass> memberClassList = new ArrayList<>();
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClassLike> classLikeList = new ArrayList<>();
-
-    public void delete() {
-        for (MemberClass memberClass : memberClassList) {
-            memberClass.delete();
-        }
-        for (ClassLike classLike : classLikeList) {
-            classLike.delete();
-        }
-        super.delete();
-    }
 }

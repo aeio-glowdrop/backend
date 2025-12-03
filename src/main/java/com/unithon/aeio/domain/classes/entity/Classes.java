@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.classes.entity;
 
 import com.unithon.aeio.global.entity.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +23,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "classes")
-@SQLRestriction("deleted_at is NULL")
 @Getter
 @Setter
 @Builder
@@ -42,20 +42,10 @@ public class Classes extends BaseTimeEntity {
     @Column
     private String thumbnailUrl;
 
-    @OneToMany(mappedBy = "classes")
+    @OneToMany(mappedBy = "classes", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<MemberClass> memberClassList = new ArrayList<>();
-    @OneToMany(mappedBy = "classes")
+    @OneToMany(mappedBy = "classes", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClassLike> classLikeList = new ArrayList<>();
-
-    public void delete() {
-        for (MemberClass memberClass : memberClassList) {
-            memberClass.delete();
-        }
-        for (ClassLike classLike : classLikeList) {
-            classLike.delete();
-        }
-        super.delete();
-    }
 }

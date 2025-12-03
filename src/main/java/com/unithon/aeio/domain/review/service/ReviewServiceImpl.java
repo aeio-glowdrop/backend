@@ -93,11 +93,9 @@ public class ReviewServiceImpl implements ReviewService {
             throw new BusinessException(REVIEW_AUTH_ORBIDDEN);
         }
 
-        // 자식 먼저 soft delete → 그 다음 본인 soft delete
-        review.delete();
+        reviewRepository.delete(review);
 
-        // JPA dirty checking으로 반영됨
-        return reviewConverter.toDeleteReview(review);
+        return reviewConverter.toDeleteReview(ownerId);
     }
 
     private void validateRate(Double rate) {

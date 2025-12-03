@@ -23,7 +23,7 @@ public abstract class ReviewResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DeleteReview {
-        private LocalDateTime deletedAt;
+        private Long ownerId;
     }
 
     @Getter

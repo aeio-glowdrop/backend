@@ -2,6 +2,7 @@ package com.unithon.aeio.domain.review.entity;
 
 import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,15 +53,6 @@ public class Review extends BaseTimeEntity {
     private MemberClass memberClass;
 
     @Builder.Default
-    @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewPhoto> photoList = new ArrayList<>();
-
-    public void delete() {
-        if (photoList != null) {
-            for (ReviewPhoto reviewPhoto : photoList) {
-                reviewPhoto.delete();
-            }
-        }
-        super.delete();
-    }
 }

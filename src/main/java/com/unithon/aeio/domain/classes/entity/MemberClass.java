@@ -3,6 +3,7 @@ package com.unithon.aeio.domain.classes.entity;
 import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.domain.review.entity.Review;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +27,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "member_class")
-@SQLRestriction("deleted_at is NULL")
 @Getter
 @Setter
 @Builder
@@ -45,20 +45,10 @@ public class MemberClass extends BaseTimeEntity {
     @JoinColumn(name = "class_id")
     private Classes classes;
 
-    @OneToMany(mappedBy = "memberClass")
+    @OneToMany(mappedBy = "memberClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PracticeLog> practiceLogList = new ArrayList<>();
-    @OneToMany(mappedBy = "memberClass")
+    @OneToMany(mappedBy = "memberClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Review> reviewList = new ArrayList<>();
-
-    public void delete() {
-        for (PracticeLog practiceLog : practiceLogList) {
-            practiceLog.delete();
-        }
-        for (Review review : reviewList) {
-            review.delete();
-        }
-        super.delete();
-    }
 }

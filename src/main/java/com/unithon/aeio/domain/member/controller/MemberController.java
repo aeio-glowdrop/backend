@@ -69,7 +69,7 @@ public class MemberController {
 
     // 멤버 삭제
     @DeleteMapping("")
-    @Operation(summary = "클래스 삭제 API", description = "멤버를 soft delete 처리합니다.")
+    @Operation(summary = "멤버 삭제 API", description = "멤버를 delete 처리합니다.")
     public ResultResponse<MemberResponse.MemberId> deleteMember(@LoginMember Member member) {
         return ResultResponse.of(DELETE_MEMBER,
                 memberService.deleteMember(member));
