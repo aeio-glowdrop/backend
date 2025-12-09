@@ -43,6 +43,10 @@ services:
         limits:
           memory: 200M
 
+    environment:
+      - GF_SERVER_ROOT_URL=https://aeio.online/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+
 volumes:
   prometheus_data:
   grafana_data:
