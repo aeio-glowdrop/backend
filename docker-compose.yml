@@ -15,6 +15,16 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=3d"
+      - "--storage.tsdb.wal-compression"
+      - "--query.max-concurrency=5"
+
+    mem_limit: 300m
+
+    deploy:
+      resources:
+        limits:
+          memory: 300M
 
   grafana:
     image: grafana/grafana:latest
@@ -26,6 +36,12 @@ services:
       - grafana_data:/var/lib/grafana # grafana 데이터 영속화
     ports:
       - "3000:3000"
+
+    mem_limit: 200m
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
 volumes:
   prometheus_data:
