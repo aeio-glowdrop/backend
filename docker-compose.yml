@@ -47,6 +47,14 @@ services:
       - GF_SERVER_ROOT_URL=https://aeio.online/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
 
+
+  mysql-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysql-exporter
+    restart: unless-stopped
+    environment:
+      - DATA_SOURCE_NAME=mysqld_exporter:glowMysqlExportDrop@(aeio-dbdb.c7ko2i604hh3.ap-northeast-2.rds.amazonaws.com:3306)/
+
 volumes:
   prometheus_data:
   grafana_data:
