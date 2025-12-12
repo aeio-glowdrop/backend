@@ -41,6 +41,7 @@ public abstract class MemberRequest {
     public static class UpdateMemberInfo {
 
         @Size(max = 9, message = "닉네임은 최대 9자까지 설정할 수 있습니다.")
+        @NotBlank(message = "닉네임 입력은 필수입니다.")
         private String nickName;
         private Gender gender;
         // null이면 수정 안 함 & 값이 오면 전체 교체
