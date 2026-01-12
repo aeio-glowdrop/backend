@@ -19,6 +19,7 @@ public enum ClassResultCode implements ResultCode {
     LIKE_LIST(200, "SC008", "사용자가 좋아요한 클래스의 목록을 페이징 조회했습니다."),
     UNSUBSCRIBE_CLASS(200, "SM009", "성공적으로 클래스 구독을 취소했습니다."),
     DELETE_CLASS(200, "SM010", "성공적으로 클래스를 삭제하였습니다."),
+    GET_CLASS_INFO(200, "SM011", "성공적으로 클래스 정보를 조회했습니다."),
     ;
     private final int status;
     private final String code;

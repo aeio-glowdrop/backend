@@ -9,14 +9,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +39,17 @@ public class Classes extends BaseTimeEntity {
     private String teacher;
     @Column
     private String thumbnailUrl;
+    @Column
+    private String level;
+    @Column
+    private String focus1;
+    @Column
+    private String focus2;
+    @Column
+    private String focus3;
+    @Column
+    private int time;
+
 
     @OneToMany(mappedBy = "classes", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

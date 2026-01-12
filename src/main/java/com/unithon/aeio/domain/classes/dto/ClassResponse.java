@@ -45,6 +45,11 @@ public abstract class ClassResponse {
         private String thumbnailUrl;
         private ClassType classType;
         private String teacher;
+        private String level;
+        private String focus1;
+        private String focus2;
+        private String focus3;
+        private int time;
         private LocalDateTime subscribedAt;
     }
 
