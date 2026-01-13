@@ -48,5 +48,5 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
         where p.memberClass.member = :member
         order by function('date', p.createdAt) desc
     """)
-    List<LocalDate> findDistinctPracticeDatesByMember(@Param("member") Member member);
+    List<java.sql.Date> findDistinctPracticeDatesByMember(@Param("member") Member member);
 }

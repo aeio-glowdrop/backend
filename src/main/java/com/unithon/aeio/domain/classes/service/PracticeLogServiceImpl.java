@@ -181,7 +181,10 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     // "운동한 날짜 리스트" 반환
     @Override
     public List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member) {
-        List<LocalDate> dates = practiceLogRepository.findDistinctPracticeDatesByMember(member);
+        List<LocalDate> dates = practiceLogRepository.findDistinctPracticeDatesByMember(member)
+                .stream()
+                .map(java.sql.Date::toLocalDate)
+                .toList();
 
         return dates.stream()
                 .map(PracticeLogResponse.PracticeDate::from)
