@@ -45,7 +45,30 @@ public class ClassConverter {
                 .classType(c.getClassType())
                 .teacher(c.getTeacher())
                 .thumbnailUrl(c.getThumbnailUrl())
+                .level(c.getLevel())
+                .focus1(c.getFocus1())
+                .focus2(c.getFocus2())
+                .focus3(c.getFocus3())
+                .time(c.getTime())
                 .subscribedAt(mc.getCreatedAt()) // 구독 시각
+                .build();
+    }
+
+    public ClassResponse.ClassInfo toClassInfo(Classes classes, Long subNum) {
+        return ClassResponse.ClassInfo
+                .builder()
+                .classId(classes.getId())
+                .className(classes.getClassName())
+                .classType(classes.getClassType())
+                .teacher(classes.getTeacher())
+                .thumbnailUrl(classes.getThumbnailUrl())
+                .level(classes.getLevel())
+                .focus1(classes.getFocus1())
+                .focus2(classes.getFocus2())
+                .focus3(classes.getFocus3())
+                .time(classes.getTime())
+                .subNum(subNum)
+                .subscribedAt(classes.getCreatedAt()) // 구독 시각
                 .build();
     }
 

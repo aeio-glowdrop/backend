@@ -45,6 +45,11 @@ public class ClassServiceImpl implements ClassService {
                 .teacher(request.getTeacher())
                 .className(request.getClassName())
                 .thumbnailUrl(request.getThumbnailUrl())
+                .level(request.getLevel())
+                .focus1(request.getFocus1())
+                .focus2(request.getFocus2())
+                .focus3(request.getFocus3())
+                .time(request.getTime())
                 .build();
 
         // 저장
@@ -163,6 +168,15 @@ public class ClassServiceImpl implements ClassService {
         classRepository.delete(classes);
 
         return classConverter.toClassId(classes);
+    }
+
+    @Override
+    public ClassResponse.ClassInfo getClassInfo(Long classId) {
+        //클래스 조회
+        Classes classes = findClass(classId);
+        //클래스 구독하는 인원수
+        long subNum = memberClassRepository.countByClassesId(classId);
+        return classConverter.toClassInfo(classes, subNum);
     }
 
     private Classes findClass(Long classId) {

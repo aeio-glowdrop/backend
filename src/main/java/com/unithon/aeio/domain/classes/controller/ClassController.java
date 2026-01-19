@@ -110,4 +110,12 @@ public class ClassController {
                 classService.deleteClass(classId));
     }
 
+    // 클래스 정보 반환 API
+    @GetMapping("/{classId}/info")
+    @Operation(summary = "클래스 정보 반환 API", description = "클래스를 구독하는 인원수를 반환하는 API입니다.")
+    public ResultResponse<ClassResponse.ClassInfo> getClassInfo(@PathVariable Long classId) {
+        return ResultResponse.of(ClassResultCode.GET_CLASS_INFO,
+                classService.getClassInfo(classId));
+    }
+
 }
