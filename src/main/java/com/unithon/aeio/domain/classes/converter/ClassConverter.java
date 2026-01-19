@@ -54,7 +54,7 @@ public class ClassConverter {
                 .build();
     }
 
-    public ClassResponse.ClassInfo toClassInfo(Classes classes) {
+    public ClassResponse.ClassInfo toClassInfo(Classes classes, Long subNum) {
         return ClassResponse.ClassInfo
                 .builder()
                 .classId(classes.getId())
@@ -67,6 +67,7 @@ public class ClassConverter {
                 .focus2(classes.getFocus2())
                 .focus3(classes.getFocus3())
                 .time(classes.getTime())
+                .subNum(subNum)
                 .subscribedAt(classes.getCreatedAt()) // 구독 시각
                 .build();
     }

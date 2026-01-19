@@ -174,7 +174,9 @@ public class ClassServiceImpl implements ClassService {
     public ClassResponse.ClassInfo getClassInfo(Long classId) {
         //클래스 조회
         Classes classes = findClass(classId);
-        return classConverter.toClassInfo(classes);
+        //클래스 구독하는 인원수
+        long subNum = memberClassRepository.countByClassesId(classId);
+        return classConverter.toClassInfo(classes, subNum);
     }
 
     private Classes findClass(Long classId) {

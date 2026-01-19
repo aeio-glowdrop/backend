@@ -50,6 +50,7 @@ public abstract class ClassResponse {
         private String focus2;
         private String focus3;
         private int time;
+        private long subNum; //구독 인원수
         private LocalDateTime subscribedAt;
     }
 
