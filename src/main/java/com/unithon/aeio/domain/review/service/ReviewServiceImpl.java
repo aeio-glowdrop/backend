@@ -152,6 +152,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .createdAt(r.getCreatedAt())
                     .photoUrls(signedPhotoUrls)
                     .writerMemberId(member.getId())
+                    .writerProfileImage(member.getProfileURL())
                     .writerNickname(member.getNickname())
                     .build();
         });
