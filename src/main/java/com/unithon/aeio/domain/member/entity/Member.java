@@ -46,6 +46,8 @@ public class Member extends BaseTimeEntity {
     @Column
     private String email;      // Access Token
     @Column
+    private String profileURL; //프로필 url
+    @Column
     private String refreshToken;     // Refresh Token
     @Column
     private String accessToken;      // Access Token

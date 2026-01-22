@@ -36,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member) {
         // 프로필 업데이트
         member.setNickname(request.getNickName());
+        member.setProfileURL(request.getProfileURL());
         // 성별 업데이트
         member.setGender(request.getGender());
         // Member 저장
