@@ -51,4 +51,13 @@ public abstract class MemberRequest {
         private List<@NotBlank @Size(max = 10, message = "고민부위 이름은 최대 10자입니다.") String> worryList;
     }
 
+    // 멤버 프로필
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateProfile {
+        @NotBlank(message = "프로필 url 입력은 필수입니다.")
+        private String profileImageUrl;
+    }
 }

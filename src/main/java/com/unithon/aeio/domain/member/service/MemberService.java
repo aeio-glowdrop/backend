@@ -14,4 +14,5 @@ public interface MemberService {
     MemberResponse.MemberId deleteMember(Member member);
     OauthResponse.CheckMemberRegistration saveUserAgreements(Member member, OauthRequest.AgreementRequest request);
     MemberResponse.NickName updateNickName(Member member, String nickname);
+    MemberResponse.MemberId updateProfile(Member member, String profileImageUrl);
 }
