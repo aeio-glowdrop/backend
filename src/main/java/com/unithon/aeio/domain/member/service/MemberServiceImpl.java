@@ -89,9 +89,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.setName(nickname);
-        memberRepository.save(member);
+        Member saved = memberRepository.save(member);
 
-        return memberConverter.toNickName(member);
+        return memberConverter.toNickName(saved);
     }
 
     @Override

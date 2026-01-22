@@ -93,7 +93,7 @@ public class MemberController {
     @PatchMapping("/nickname")
     @Operation(summary = "사용자 닉네임 수정 API", description = "로그인한 사용자의 닉네임을 수정하는 API입니다.")
     public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member, @RequestParam String nickname) {
-        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
+        return ResultResponse.of(MemberResultCode.UPDATE_NICKNAME,
                 memberService.updateNickName(member, nickname));
     }
 
