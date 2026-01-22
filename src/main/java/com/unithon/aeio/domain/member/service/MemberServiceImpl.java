@@ -1,6 +1,5 @@
 package com.unithon.aeio.domain.member.service;
 
-import com.unithon.aeio.domain.classes.entity.Classes;
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
@@ -13,14 +12,23 @@ import com.unithon.aeio.domain.member.entity.Worry;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import com.unithon.aeio.domain.member.repository.UserAgreementRepository;
 import com.unithon.aeio.domain.member.repository.WorryRepository;
+import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.unithon.aeio.global.error.code.GlobalErrorCode.INVALID_URL;
+import static com.unithon.aeio.global.error.code.JwtErrorCode.NICKNAME_BLANK;
+
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,10 +40,20 @@ public class MemberServiceImpl implements MemberService {
     private final PracticeLogRepository practiceLogRepository;
     private final UserAgreementRepository userAgreementRepository;
 
+    // AWS SDK v2 기준
+    private final software.amazon.awssdk.services.s3.S3Client s3Client;
+
+    private static final String BUCKET = "aeio-photo2";
+    private static final String PHOTO_PREFIX = "photo/";
+    private static final String DEFAULT_PREFIX = "default/";
+    // s3 호스트
+    private static final String ALLOWED_HOST = "aeio-photo2.s3.ap-northeast-2.amazonaws.com";
+
     @Override
     public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member) {
         // 프로필 업데이트
         member.setNickname(request.getNickName());
+        member.setProfileURL(request.getProfileURL());
         // 성별 업데이트
         member.setGender(request.getGender());
         // Member 저장
@@ -58,6 +76,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.NickName getNickName(Member member) {
+
+        return memberConverter.toNickName(member);
+    }
+
+    @Override
+    public MemberResponse.NickName updateNickName(Member member, String nickname) {
+
+        // 이름 필드가 비어 있다면 오류
+        if (nickname == null || nickname.isBlank()) {
+            throw new BusinessException(NICKNAME_BLANK);
+        }
+
+        member.setName(nickname);
+        memberRepository.save(member);
+
         return memberConverter.toNickName(member);
     }
 
@@ -179,4 +212,108 @@ public class MemberServiceImpl implements MemberService {
         // 응답은 항상 true 고정
         return new OauthResponse.CheckMemberRegistration(true);
     }
+
+
+    //------ 프로필 사진 업로드 처리
+    @Override
+    public MemberResponse.MemberId updateProfile(Member member, String profileImageUrl) {
+
+        String newUrl = profileImageUrl == null ? null : profileImageUrl.trim();
+
+        //프로필 링크 유효성 점검
+        if (newUrl == null || newUrl.isBlank()) {
+            throw new BusinessException(INVALID_URL);
+        }
+
+        // 최소 url 형식 체크
+        if (!(newUrl.startsWith("https://") || newUrl.startsWith("http://"))) {
+            throw new BusinessException(INVALID_URL);
+        }
+
+        // 우리 S3 버킷의 URL만 허용 (외부 링크/다른 버킷 방지)
+        validateS3Url(newUrl);
+
+        // 기존 url 가져오기
+        String oldUrl = member.getProfileURL();
+        if (newUrl.equals(oldUrl)) {
+            return memberConverter.toMemberId(member);
+        }
+
+        // 1) DB 업데이트 (없으면 등록, 있으면 교체)
+        member.setProfileURL(newUrl);
+        Member saved = memberRepository.save(member);
+
+        // 2) 커밋 후 기존 이미지 삭제 시도 (photo/만 삭제)
+        deleteOldImageAfterCommit(oldUrl);
+
+        return memberConverter.toMemberId(member);
+    }
+
+    private void validateS3Url(String url) {
+        try {
+            URI uri = URI.create(url);
+            String host = uri.getHost();
+            String path = uri.getPath();
+
+            if (host == null || path == null) {
+                throw new BusinessException(INVALID_URL);
+            }
+
+            // host 검증하기
+            if (!ALLOWED_HOST.equals(host)) {
+                throw new BusinessException(INVALID_URL);
+            }
+
+            // key는 photo/ 또는 default/ 로 시작해야 함
+            String key = path.startsWith("/") ? path.substring(1) : path;
+            if (!(key.startsWith(PHOTO_PREFIX) || key.startsWith(DEFAULT_PREFIX))) {
+                throw new BusinessException(INVALID_URL);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException(INVALID_URL);
+        }
+    }
+
+    private void deleteOldImageAfterCommit(String oldUrl) {
+        if (oldUrl == null || oldUrl.isBlank()) return;
+
+        ExtractedS3 old = extractS3FromAllowedUrl(oldUrl);
+        if (old == null) return;
+
+        //  오직 photo/만 삭제 (default/ 는 보호)
+        if (!old.key().startsWith(PHOTO_PREFIX)) return;
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    s3Client.deleteObject(b -> b.bucket(old.bucket()).key(old.key()));
+                } catch (Exception e) {
+                    // 삭제 실패는 치명적이지 않음(쓰레기 객체가 남는 정도)
+                    log.warn("Failed to delete old profile image. bucket={}, key={}, oldUrl={}",
+                            old.bucket(), old.key(), oldUrl, e);
+                }
+            }
+        });
+    }
+
+    // 최종 URL에서 bucket+key 추출
+    private ExtractedS3 extractS3FromAllowedUrl(String url) {
+        try {
+            URI uri = URI.create(url);
+            if (!ALLOWED_HOST.equals(uri.getHost())) return null;
+
+            String path = uri.getPath();
+            if (path == null || path.isBlank() || "/".equals(path)) return null;
+
+            String key = path.startsWith("/") ? path.substring(1) : path;
+            if (!(key.startsWith(PHOTO_PREFIX) || key.startsWith(DEFAULT_PREFIX))) return null;
+
+            return new ExtractedS3(BUCKET, key);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private record ExtractedS3(String bucket, String key) {}
 }

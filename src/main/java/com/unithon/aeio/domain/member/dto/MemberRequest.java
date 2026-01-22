@@ -27,6 +27,8 @@ public abstract class MemberRequest {
         @NotNull(message = "성별은 필수로 입력해야 합니다.")
         private Gender gender;
 
+        private String profileURL;
+
         @NotNull(message = "고민 부위는 최소 1개 이상이어야 합니다.")
         @Size(max = 8, message = "고민 부위는 최대 8개까지 선택할 수 있습니다.")
         private List<@NotBlank @Size(max = 10, message = "고민부위 이름은 최대 10자입니다.") String> worryList;
@@ -49,4 +51,13 @@ public abstract class MemberRequest {
         private List<@NotBlank @Size(max = 10, message = "고민부위 이름은 최대 10자입니다.") String> worryList;
     }
 
+    // 멤버 프로필
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateProfile {
+        @NotBlank(message = "프로필 url 입력은 필수입니다.")
+        private String profileImageUrl;
+    }
 }

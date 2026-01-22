@@ -16,6 +16,7 @@ public enum MemberResultCode implements ResultCode {
     UPDATE_MEMBER(200, "SM006", "성공적으로 멤버 정보를 수정했습니다."),
     DELETE_MEMBER(200, "SM007", "성공적으로 멤버를 삭제했습니다."),
     AGREE(200, "SM008", "성공적으로 약관에 동의하였습니다."),
+    UPDATE_PROFILE(200, "SM009", "프로필 사진을 성공적으로 업로드했습니다."),
     ;
     private final int status;
     private final String code;

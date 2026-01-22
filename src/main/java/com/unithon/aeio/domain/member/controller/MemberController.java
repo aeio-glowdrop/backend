@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.unithon.aeio.global.error.code.GlobalErrorCode.UNAUTHORIZED;
 import static com.unithon.aeio.global.result.code.MemberResultCode.AGREE;
 import static com.unithon.aeio.global.result.code.MemberResultCode.DELETE_MEMBER;
 import static com.unithon.aeio.global.result.code.MemberResultCode.GET_CURRENT_STREAK;
+import static com.unithon.aeio.global.result.code.MemberResultCode.UPDATE_PROFILE;
 
 @RestController
 @RequestMapping("/members")
@@ -86,5 +88,19 @@ public class MemberController {
         }
 
         return ResultResponse.of(AGREE, memberService.saveUserAgreements(member, request));
+    }
+
+    @PatchMapping("/nickname")
+    @Operation(summary = "사용자 닉네임 수정 API", description = "로그인한 사용자의 닉네임을 수정하는 API입니다.")
+    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member, @RequestParam String nickname) {
+        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
+                memberService.updateNickName(member, nickname));
+    }
+
+    @PostMapping("/profileImage")
+    @Operation(summary = "프로필 사진 업로드/수정 API", description = "로그인한 사용자의 프로필 사진을 업로드/수정하는 API입니다.")
+    public ResultResponse<MemberResponse.MemberId> updateProfileImage(@LoginMember Member member, @RequestBody MemberRequest.UpdateProfile request) {
+        return ResultResponse.of(UPDATE_PROFILE,
+                memberService.updateProfile(member, request.getProfileImageUrl()));
     }
 }

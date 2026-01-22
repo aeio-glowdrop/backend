@@ -51,6 +51,7 @@ public abstract class ReviewResponse {
         private LocalDateTime createdAt;
         private Long writerMemberId;
         private String writerNickname;
+        private String writerProfileImage;
     }
 
 }
