@@ -13,6 +13,7 @@ import com.unithon.aeio.domain.member.entity.Worry;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import com.unithon.aeio.domain.member.repository.UserAgreementRepository;
 import com.unithon.aeio.domain.member.repository.WorryRepository;
+import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.unithon.aeio.global.error.code.JwtErrorCode.NICKNAME_BLANK;
 
 @Service
 @Transactional
@@ -59,6 +62,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.NickName getNickName(Member member) {
+
+        return memberConverter.toNickName(member);
+    }
+
+    @Override
+    public MemberResponse.NickName updateNickName(Member member, String nickname) {
+
+        // 이름 필드가 비어 있다면 오류
+        if (nickname == null || nickname.isBlank()) {
+            throw new BusinessException(NICKNAME_BLANK);
+        }
+
+        member.setName(nickname);
+        memberRepository.save(member);
+
         return memberConverter.toNickName(member);
     }
 

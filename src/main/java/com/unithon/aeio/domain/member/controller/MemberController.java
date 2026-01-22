@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.unithon.aeio.global.error.code.GlobalErrorCode.UNAUTHORIZED;
@@ -86,5 +88,12 @@ public class MemberController {
         }
 
         return ResultResponse.of(AGREE, memberService.saveUserAgreements(member, request));
+    }
+
+    @PatchMapping("/nickname")
+    @Operation(summary = "사용자 닉네임 수정 API", description = "로그인한 사용자의 닉네임을 수정하는 API입니다.")
+    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member, @RequestParam String nickname) {
+        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
+                memberService.updateNickName(member, nickname));
     }
 }
