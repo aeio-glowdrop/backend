@@ -88,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
             throw new BusinessException(NICKNAME_BLANK);
         }
 
-        member.setName(nickname);
+        member.setNickname(nickname);
         Member saved = memberRepository.save(member);
 
         return memberConverter.toNickName(saved);
