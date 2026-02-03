@@ -26,7 +26,7 @@ public abstract class MemberResponse {
     public static class MemberInfo {
         private long memberId;
         private String nickName;
-        private String profileImage;
+        private String profileURL;
         private String email;
         private List<String> worryList;
     }

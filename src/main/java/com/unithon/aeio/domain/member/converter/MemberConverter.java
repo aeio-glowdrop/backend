@@ -66,6 +66,7 @@ public class MemberConverter {
         return MemberResponse.MemberInfo
                 .builder()
                 .nickName(member.getNickname())
+                .profileURL(member.getProfileURL())
                 .memberId(member.getId())
                 .worryList(worryList)
                 .build();
