@@ -67,6 +67,7 @@ public class MemberConverter {
                 .builder()
                 .nickName(member.getNickname())
                 .profileURL(member.getProfileURL())
+                .email(member.getEmail())
                 .memberId(member.getId())
                 .worryList(worryList)
                 .build();
