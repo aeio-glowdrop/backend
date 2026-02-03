@@ -5,6 +5,7 @@ import com.unithon.aeio.domain.member.dto.AppleInfoResponse;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.Worry;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -60,11 +61,14 @@ public class MemberConverter {
                 .build();
     }
 
-    public MemberResponse.MemberInfo toNickName(Member member) {
+    public MemberResponse.MemberInfo toMemberInfo(Member member) {
         return MemberResponse.MemberInfo
                 .builder()
                 .nickName(member.getNickname())
                 .memberId(member.getId())
+                .worryList(member.getWorries().stream()
+                        .map(Worry::getName) // 필드명 맞춰
+                        .toList())
                 .build();
     }
 

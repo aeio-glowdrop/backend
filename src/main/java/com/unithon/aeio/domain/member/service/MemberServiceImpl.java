@@ -76,8 +76,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.MemberInfo getMemberInfo(Member member) {
-
-        return memberConverter.toNickName(member);
+        return memberConverter.toMemberInfo(member);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(nickname);
         Member saved = memberRepository.save(member);
 
-        return memberConverter.toNickName(saved);
+        return memberConverter.toMemberInfo(saved);
     }
 
     @Override
