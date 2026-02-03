@@ -1,6 +1,7 @@
 package com.unithon.aeio.domain.member.service;
 
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
+import com.unithon.aeio.domain.classes.service.PracticeLogService;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
@@ -39,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final WorryRepository worryRepository;
     private final PracticeLogRepository practiceLogRepository;
     private final UserAgreementRepository userAgreementRepository;
+    private final PracticeLogService practiceLogService;
 
     // AWS SDK v2 기준
     private final software.amazon.awssdk.services.s3.S3Client s3Client;
@@ -78,7 +80,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public MemberResponse.MemberInfo getMemberInfo(Member member) {
         List<String> worryList = worryRepository.findWorryNamesByMemberId(member.getId());
-        return memberConverter.toMemberInfo(member, worryList);
+        String signedProfileUrl = null;
+        if (member.getProfileURL() != null && !member.getProfileURL().isBlank()) {
+            signedProfileUrl = practiceLogService.generateGetPresignedUrlFromPhotoUrl(member.getProfileURL());
+        }
+        return memberConverter.toMemberInfo(member, worryList, signedProfileUrl);
     }
 
     @Override

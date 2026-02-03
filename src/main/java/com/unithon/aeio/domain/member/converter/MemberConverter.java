@@ -62,11 +62,11 @@ public class MemberConverter {
                 .build();
     }
 
-    public MemberResponse.MemberInfo toMemberInfo(Member member, List<String> worryList) {
+    public MemberResponse.MemberInfo toMemberInfo(Member member, List<String> worryList, String profileURL) {
         return MemberResponse.MemberInfo
                 .builder()
                 .nickName(member.getNickname())
-                .profileURL(member.getProfileURL())
+                .profileURL(profileURL)
                 .email(member.getEmail())
                 .memberId(member.getId())
                 .worryList(worryList)
