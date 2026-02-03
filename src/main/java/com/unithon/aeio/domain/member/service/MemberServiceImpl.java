@@ -77,7 +77,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MemberResponse.MemberInfo getMemberInfo(Member member) {
-        return memberConverter.toMemberInfo(member);
+        List<String> worryList = worryRepository.findWorryNamesByMemberId(member.getId());
+        return memberConverter.toMemberInfo(member, worryList);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse.MemberInfo updateNickName(Member member, String nickname) {
+    public MemberResponse.NickName updateNickName(Member member, String nickname) {
 
         // 이름 필드가 비어 있다면 오류
         if (nickname == null || nickname.isBlank()) {
@@ -97,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(nickname);
         Member saved = memberRepository.save(member);
 
-        return memberConverter.toMemberInfo(saved);
+        return memberConverter.toNickName(saved);
     }
 
     @Override

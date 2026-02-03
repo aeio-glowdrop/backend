@@ -13,7 +13,7 @@ public interface MemberService {
     MemberResponse.MemberId updateMember(MemberRequest.UpdateMemberInfo request, Member member);
     MemberResponse.MemberId deleteMember(Member member);
     OauthResponse.CheckMemberRegistration saveUserAgreements(Member member, OauthRequest.AgreementRequest request);
-    MemberResponse.MemberInfo updateNickName(Member member, String nickname);
+    MemberResponse.NickName updateNickName(Member member, String nickname);
     MemberResponse.MemberId updateProfile(Member member, String profileImageUrl);
     MemberResponse.NickName getNickName(Member member);
 }

@@ -9,6 +9,7 @@ import com.unithon.aeio.domain.member.entity.Worry;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class MemberConverter {
@@ -61,14 +62,12 @@ public class MemberConverter {
                 .build();
     }
 
-    public MemberResponse.MemberInfo toMemberInfo(Member member) {
+    public MemberResponse.MemberInfo toMemberInfo(Member member, List<String> worryList) {
         return MemberResponse.MemberInfo
                 .builder()
                 .nickName(member.getNickname())
                 .memberId(member.getId())
-                .worryList(member.getWorries().stream()
-                        .map(Worry::getName) // 필드명 맞춰
-                        .toList())
+                .worryList(worryList)
                 .build();
     }
 

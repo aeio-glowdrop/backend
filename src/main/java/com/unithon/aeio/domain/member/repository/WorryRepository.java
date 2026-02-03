@@ -16,5 +16,12 @@ public interface WorryRepository extends JpaRepository<Worry, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from Worry w where w.member.id = :memberId")
     void deleteByMemberId(@Param("memberId") Long memberId);
+
+    @Query("""
+        select w.name
+        from Worry w
+        where w.member.id = :memberId
+    """)
+    List<String> findWorryNamesByMemberId(Long memberId);
 }
 
