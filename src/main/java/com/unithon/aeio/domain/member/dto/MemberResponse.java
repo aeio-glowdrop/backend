@@ -21,9 +21,11 @@ public abstract class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NickName {
-        private String nickName;
+    public static class MemberInfo {
         private long memberId;
+        private String nickName;
+        private String profileImage;
+        private String email;
     }
 
     @Getter

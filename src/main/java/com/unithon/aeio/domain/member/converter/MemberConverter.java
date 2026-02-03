@@ -60,8 +60,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public MemberResponse.NickName toNickName(Member member) {
-        return MemberResponse.NickName
+    public MemberResponse.MemberInfo toNickName(Member member) {
+        return MemberResponse.MemberInfo
                 .builder()
                 .nickName(member.getNickname())
                 .memberId(member.getId())

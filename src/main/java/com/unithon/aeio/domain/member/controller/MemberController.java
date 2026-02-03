@@ -55,11 +55,11 @@ public class MemberController {
                 memberService.updateMember(request, member));
     }
 
-    @GetMapping("/nickName")
-    @Operation(summary = "사용자 닉네임 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
-    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member) {
-        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
-                memberService.getNickName(member));
+    @GetMapping("/information")
+    @Operation(summary = "사용자 정보 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
+    public ResultResponse<MemberResponse.MemberInfo> getMemberInfo(@LoginMember Member member) {
+        return ResultResponse.of(MemberResultCode.GET_USER_INFO,
+                memberService.getMemberInfo(member));
     }
 
     @GetMapping("/streak")
@@ -92,7 +92,7 @@ public class MemberController {
 
     @PatchMapping("/nickname")
     @Operation(summary = "사용자 닉네임 수정 API", description = "로그인한 사용자의 닉네임을 수정하는 API입니다.")
-    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member, @RequestParam String nickname) {
+    public ResultResponse<MemberResponse.MemberInfo> getNickName(@LoginMember Member member, @RequestParam String nickname) {
         return ResultResponse.of(MemberResultCode.UPDATE_NICKNAME,
                 memberService.updateNickName(member, nickname));
     }

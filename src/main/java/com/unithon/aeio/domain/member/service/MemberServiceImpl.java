@@ -75,13 +75,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse.NickName getNickName(Member member) {
+    public MemberResponse.MemberInfo getMemberInfo(Member member) {
 
         return memberConverter.toNickName(member);
     }
 
     @Override
-    public MemberResponse.NickName updateNickName(Member member, String nickname) {
+    public MemberResponse.MemberInfo updateNickName(Member member, String nickname) {
 
         // 이름 필드가 비어 있다면 오류
         if (nickname == null || nickname.isBlank()) {
