@@ -72,6 +72,15 @@ public class MemberConverter {
                 .build();
     }
 
+
+    public MemberResponse.NickName toNickName(Member member) {
+        return MemberResponse.NickName
+                .builder()
+                .nickName(member.getNickname())
+                .memberId(member.getId())
+                .build();
+    }
+
     public MemberResponse.Streak toStreak(LocalDate today, int streak) {
         return MemberResponse.Streak
                 .builder()

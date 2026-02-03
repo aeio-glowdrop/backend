@@ -62,6 +62,13 @@ public class MemberController {
                 memberService.getMemberInfo(member));
     }
 
+    @GetMapping("/nickName")
+    @Operation(summary = "사용자 닉네임 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
+    public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member) {
+        return ResultResponse.of(MemberResultCode.GET_USER_INFO,
+                memberService.getNickName(member));
+    }
+
     @GetMapping("/streak")
     @Operation(summary = "현재 스트릭 조회", description = "오늘을 기준으로 연속 운동 일수를 반환합니다.")
     public ResultResponse<MemberResponse.Streak> getStreak(@LoginMember Member member) {

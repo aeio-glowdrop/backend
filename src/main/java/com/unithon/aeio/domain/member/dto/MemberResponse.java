@@ -35,6 +35,15 @@ public abstract class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class NickName {
+        private long memberId;
+        private String nickName;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Streak {
         private LocalDate today;
         private int streakDays;

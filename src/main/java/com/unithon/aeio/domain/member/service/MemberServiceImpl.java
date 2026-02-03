@@ -75,8 +75,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberResponse.MemberInfo getMemberInfo(Member member) {
         return memberConverter.toMemberInfo(member);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberResponse.NickName getNickName(Member member) {
+        return memberConverter.toNickName(member);
     }
 
     @Override
