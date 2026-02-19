@@ -18,10 +18,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -121,5 +124,81 @@ class PracticeLogServiceTest {
         assertThat(result.getTotalCount()).isEqualTo(5);
         assertThat(result.getMemberClassId()).isEqualTo(100L);
         assertThat(result.getClassId()).isEqualTo(10L);
+    }
+
+    // ====== getClassStreak 테스트 ======
+
+    @Test
+    @DisplayName("오늘 기록이 없으면 streak은 0이다")
+    void getClassStreak_noRecordToday_returnsZero() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of(yesterday));
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(0);
+        assertThat(result.getClassId()).isEqualTo(10L);
+    }
+
+    @Test
+    @DisplayName("기록이 아예 없으면 streak은 0이다")
+    void getClassStreak_emptyRecords_returnsZero() {
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of());
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("오늘만 기록이 있으면 streak은 1이다")
+    void getClassStreak_onlyToday_returnsOne() {
+        LocalDate today = LocalDate.now();
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of(today));
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("오늘 + 어제 기록이 있으면 streak은 2이다")
+    void getClassStreak_todayAndYesterday_returnsTwo() {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of(today, yesterday));
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("오늘 + 어제 + 그제 연속 기록이 있으면 streak은 3이다")
+    void getClassStreak_threeDaysInARow_returnsThree() {
+        LocalDate today = LocalDate.now();
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of(today, today.minusDays(1), today.minusDays(2)));
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("오늘은 있지만 어제가 없으면 streak은 1이다")
+    void getClassStreak_todayButNotYesterday_returnsOne() {
+        LocalDate today = LocalDate.now();
+        LocalDate twoDaysAgo = today.minusDays(2);
+        when(practiceLogRepository.findDistinctActivityDatesByMemberAndClass(1L, 10L))
+                .thenReturn(List.of(today, twoDaysAgo));
+
+        PracticeLogResponse.ClassStreak result = practiceLogService.getClassStreak(10L, member);
+
+        assertThat(result.getStreak()).isEqualTo(1);
     }
 }

@@ -18,4 +18,5 @@ public interface PracticeLogService {
     String generateGetPresignedUrlFromPhotoUrl(String photoUrl);
     List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member);
     PracticeLogResponse.TotalCount getTotalCount(Long classId, Member member);
+    PracticeLogResponse.ClassStreak getClassStreak(Long classId, Member member);
 }

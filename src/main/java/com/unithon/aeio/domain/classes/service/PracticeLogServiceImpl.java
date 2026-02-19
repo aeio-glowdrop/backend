@@ -201,6 +201,39 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     }
 
     @Override
+    public PracticeLogResponse.ClassStreak getClassStreak(Long classId, Member member) {
+        List<LocalDate> dates = practiceLogRepository
+                .findDistinctActivityDatesByMemberAndClass(member.getId(), classId);
+
+        int streak = 0;
+
+        // 오늘 기록이 없으면 스트릭 0
+        LocalDate today = LocalDate.now();
+        if (dates.isEmpty() || !dates.get(0).isEqual(today)) {
+            return PracticeLogResponse.ClassStreak.builder()
+                    .classId(classId)
+                    .streak(streak)
+                    .build();
+        }
+
+        // 오늘부터 하루씩 감소하며 연속성 체크
+        LocalDate expected = today;
+        for (LocalDate date : dates) {
+            if (date.isEqual(expected)) {
+                streak++;
+                expected = expected.minusDays(1);
+            } else if (date.isBefore(expected)) {
+                break;
+            }
+        }
+
+        return PracticeLogResponse.ClassStreak.builder()
+                .classId(classId)
+                .streak(streak)
+                .build();
+    }
+
+    @Override
     public Classes findClass(long classId) {
         return classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));

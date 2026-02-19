@@ -27,6 +27,7 @@ import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_BASIC_L
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_PRESIGNED_URL;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_DATE;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_CLASS_STREAK;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_TOTAL_COUNT;
 
 @RestController
@@ -83,5 +84,14 @@ public class PracticeLogController {
             @LoginMember Member member) {
         return ResultResponse.of(GET_TOTAL_COUNT,
                 practiceLogService.getTotalCount(classId, member));
+    }
+
+    @GetMapping("/streak")
+    @Operation(summary = "클래스별 연속 운동 일수 조회 API", description = "오늘 기준으로 특정 클래스를 연속으로 며칠 수행했는지 반환합니다. 오늘 기록이 없으면 0입니다.")
+    public ResultResponse<PracticeLogResponse.ClassStreak> getClassStreak(
+            @RequestParam("classId") Long classId,
+            @LoginMember Member member) {
+        return ResultResponse.of(GET_CLASS_STREAK,
+                practiceLogService.getClassStreak(classId, member));
     }
 }

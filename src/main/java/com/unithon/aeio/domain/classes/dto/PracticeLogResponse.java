@@ -66,6 +66,15 @@ public abstract class PracticeLogResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class ClassStreak {
+        private Long classId;
+        private int streak;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TotalCount {
         private Long memberClassId;
         private Long classId;

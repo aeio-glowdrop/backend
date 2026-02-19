@@ -49,4 +49,26 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
         order by function('date', p.createdAt) desc
     """)
     List<java.sql.Date> findDistinctPracticeDatesByMember(@Param("member") Member member);
+
+    // 특정 멤버 + 특정 클래스 기준 날짜 distinct 조회 (최신순)
+    @Query(value = """
+        SELECT DATE(pl.created_at) AS activity_date
+        FROM practice_log pl
+        JOIN member_class mc ON pl.member_class_id = mc.member_class_id
+        WHERE mc.member_id = :memberId
+          AND mc.class_id  = :classId
+          AND pl.deleted_at IS NULL
+          AND mc.deleted_at IS NULL
+        GROUP BY activity_date
+        ORDER BY activity_date DESC
+        """, nativeQuery = true)
+    List<Date> findDistinctActivityDatesByMemberAndClassRaw(
+            @Param("memberId") Long memberId,
+            @Param("classId") Long classId);
+
+    default List<LocalDate> findDistinctActivityDatesByMemberAndClass(Long memberId, Long classId) {
+        return findDistinctActivityDatesByMemberAndClassRaw(memberId, classId).stream()
+                .map(Date::toLocalDate)
+                .toList();
+    }
 }
