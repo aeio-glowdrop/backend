@@ -48,6 +48,14 @@ public class PracticeLogConverter {
                 .build();
     }
 
+    public PracticeLogResponse.TotalCount toTotalCount(MemberClass memberClass) {
+        return PracticeLogResponse.TotalCount.builder()
+                .memberClassId(memberClass.getId())
+                .classId(memberClass.getClasses().getId())
+                .totalCount(memberClass.getTotalCount())
+                .build();
+    }
+
     //일일 운동 정보 반환
     public PracticeLogResponse.PracticeItem toItem(PracticeLog log) {
         MemberClass memberClass = log.getMemberClass();

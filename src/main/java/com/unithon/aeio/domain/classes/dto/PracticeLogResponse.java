@@ -63,6 +63,25 @@ public abstract class PracticeLogResponse {
     }
 
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClassStreak {
+        private Long classId;
+        private int streak;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TotalCount {
+        private Long memberClassId;
+        private Long classId;
+        private Integer totalCount;
+    }
+
+    @Getter
     @AllArgsConstructor
     public static class PracticeDate {
         private LocalDate date;

@@ -159,6 +159,9 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         // 저장
         practiceLogRepository.save(log);
 
+        // 운동 1회 누적
+        memberClass.setTotalCount(memberClass.getTotalCount() + 1);
+
         return practiceLogConverter.toPracticeLogId(log);
 
     }
@@ -189,6 +192,45 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         return dates.stream()
                 .map(PracticeLogResponse.PracticeDate::from)
                 .toList();
+    }
+
+    @Override
+    public PracticeLogResponse.TotalCount getTotalCount(Long classId, Member member) {
+        MemberClass memberClass = findMemberClass(member.getId(), classId);
+        return practiceLogConverter.toTotalCount(memberClass);
+    }
+
+    @Override
+    public PracticeLogResponse.ClassStreak getClassStreak(Long classId, Member member) {
+        List<LocalDate> dates = practiceLogRepository
+                .findDistinctActivityDatesByMemberAndClass(member.getId(), classId);
+
+        int streak = 0;
+
+        // 오늘 기록이 없으면 스트릭 0
+        LocalDate today = LocalDate.now();
+        if (dates.isEmpty() || !dates.get(0).isEqual(today)) {
+            return PracticeLogResponse.ClassStreak.builder()
+                    .classId(classId)
+                    .streak(streak)
+                    .build();
+        }
+
+        // 오늘부터 하루씩 감소하며 연속성 체크
+        LocalDate expected = today;
+        for (LocalDate date : dates) {
+            if (date.isEqual(expected)) {
+                streak++;
+                expected = expected.minusDays(1);
+            } else if (date.isBefore(expected)) {
+                break;
+            }
+        }
+
+        return PracticeLogResponse.ClassStreak.builder()
+                .classId(classId)
+                .streak(streak)
+                .build();
     }
 
     @Override

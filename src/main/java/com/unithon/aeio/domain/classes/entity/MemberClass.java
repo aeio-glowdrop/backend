@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.ColumnDefault;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,10 @@ public class MemberClass extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id")
     private Classes classes;
+
+    @Column(name = "total_count", columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    private Integer totalCount = 0;
 
     @OneToMany(mappedBy = "memberClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

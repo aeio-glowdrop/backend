@@ -27,11 +27,13 @@ import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_BASIC_L
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_PRESIGNED_URL;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_DATE;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_CLASS_STREAK;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_TOTAL_COUNT;
 
 @RestController
 @Slf4j
 @RequestMapping("/practice")
-@Tag(name = "03. 일별 운동정보 API", description = "일별 운동정보를 CRUD하는 API입니다.")
+@Tag(name = "03. 운동정보 API", description = "운동정보를 CRUD하는 API입니다.")
 @RequiredArgsConstructor
 public class PracticeLogController {
 
@@ -49,7 +51,7 @@ public class PracticeLogController {
     }
 
     @PostMapping("/basic")
-    @Operation(summary = "일별 운동정보 저장 API", description = "베이직 클래스를 수행했을 때 일별 운동정보를 저장하는 API 입니다.")
+    @Operation(summary = "운동정보 저장 API", description = "운동정보를 저장하는 API 입니다.")
     public ResultResponse<PracticeLogResponse.PracticeLogId> uploadPhotos(@RequestParam("classId") Long classId,
                                                                           @LoginMember Member member,
                                                                           @RequestBody @Valid PracticeLogRequest.BasicLog request) {
@@ -73,5 +75,23 @@ public class PracticeLogController {
         return ResultResponse.of(GET_PRACTICE_LIST,
                 practiceLogService.getPracticeDateList(member)
         );
+    }
+
+    @GetMapping("/total-count")
+    @Operation(summary = "운동 총 횟수 조회 API", description = "유저가 특정 클래스에서 수행한 운동 총 횟수를 반환합니다.")
+    public ResultResponse<PracticeLogResponse.TotalCount> getTotalCount(
+            @RequestParam("classId") Long classId,
+            @LoginMember Member member) {
+        return ResultResponse.of(GET_TOTAL_COUNT,
+                practiceLogService.getTotalCount(classId, member));
+    }
+
+    @GetMapping("/streak")
+    @Operation(summary = "클래스별 연속 운동 일수 조회 API", description = "오늘 기준으로 특정 클래스를 연속으로 며칠 수행했는지 반환합니다. 오늘 기록이 없으면 0입니다.")
+    public ResultResponse<PracticeLogResponse.ClassStreak> getClassStreak(
+            @RequestParam("classId") Long classId,
+            @LoginMember Member member) {
+        return ResultResponse.of(GET_CLASS_STREAK,
+                practiceLogService.getClassStreak(classId, member));
     }
 }
