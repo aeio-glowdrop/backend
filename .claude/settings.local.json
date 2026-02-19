@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew compileJava:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Njc5MTAxMzc2IiwiaWF0IjoxNzY3NTE1NDU3LCJleHAiOjE3NzIzNTQ0NTd9.skHHB02z9DkV_SQFd4nck-f7jNn4v4BwiqGFt_zL2fY\")",
+      "Bash(TOKEN=\"eyJhbGciOiAiSFMyNTYifQ.eyJzdWIiOiAiNDY3OTEwMTM3NiIsICJpYXQiOiAxNzcxNDg2NDQ3LCAiZXhwIjogMTc3NjMyNTQ0N30.75S-8y8t0xFLG1-J4OgtrfIoKSieXv2eHdpdAIHcZNQ\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Njc5MTAxMzc2IiwiaWF0IjoxNzcxNDg2NDg4LCJleHAiOjE3NzYzMjU0ODh9.0oKMtM6UpguQ4i536mTX5fNipNikvQiyrL_WgCVEg-U\":*)",
+      "Bash(echo:*)",
+      "Bash(mysql:*)",
+      "Bash(brew list:*)",
+      "Bash(/usr/local/mysql/bin/mysql:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(git stash:*)",
+      "Bash(git restore:*)"
+    ]
+  }
+}

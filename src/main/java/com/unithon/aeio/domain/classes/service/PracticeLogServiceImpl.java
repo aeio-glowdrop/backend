@@ -159,6 +159,9 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         // 저장
         practiceLogRepository.save(log);
 
+        // 운동 1회 누적
+        memberClass.setTotalCount(memberClass.getTotalCount() + 1);
+
         return practiceLogConverter.toPracticeLogId(log);
 
     }
@@ -189,6 +192,12 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         return dates.stream()
                 .map(PracticeLogResponse.PracticeDate::from)
                 .toList();
+    }
+
+    @Override
+    public PracticeLogResponse.TotalCount getTotalCount(Long classId, Member member) {
+        MemberClass memberClass = findMemberClass(member.getId(), classId);
+        return practiceLogConverter.toTotalCount(memberClass);
     }
 
     @Override
