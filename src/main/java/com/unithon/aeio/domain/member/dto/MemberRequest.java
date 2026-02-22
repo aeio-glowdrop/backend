@@ -1,5 +1,6 @@
 package com.unithon.aeio.domain.member.dto;
 
+import com.unithon.aeio.domain.member.entity.AgeGroup;
 import com.unithon.aeio.domain.member.entity.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,9 @@ public abstract class MemberRequest {
 
         @NotNull(message = "성별은 필수로 입력해야 합니다.")
         private Gender gender;
+
+        @NotNull(message = "연령대는 필수로 입력해야 합니다.")
+        private AgeGroup ageGroup;
 
         private String profileURL;
 

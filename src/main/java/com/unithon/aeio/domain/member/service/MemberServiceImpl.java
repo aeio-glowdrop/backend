@@ -58,6 +58,8 @@ public class MemberServiceImpl implements MemberService {
         member.setProfileURL(request.getProfileURL());
         // 성별 업데이트
         member.setGender(request.getGender());
+        // 연령대 업데이트
+        member.setAgeGroup(request.getAgeGroup());
         // Member 저장
         memberRepository.save(member);
 

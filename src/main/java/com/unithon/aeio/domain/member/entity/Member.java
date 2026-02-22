@@ -60,6 +60,10 @@ public class Member extends BaseTimeEntity {
     @Column
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private AgeGroup ageGroup;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Worry> worries = new ArrayList<>();
