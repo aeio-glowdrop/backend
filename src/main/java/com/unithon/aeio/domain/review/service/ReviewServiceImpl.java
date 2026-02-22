@@ -152,7 +152,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .createdAt(r.getCreatedAt())
                     .photoUrls(signedPhotoUrls)
                     .writerMemberId(member.getId())
-                    .writerProfileImage(member.getProfileURL())
+                    .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
                     .writerNickname(member.getNickname())
                     .totalCount(mc.getTotalCount())
                     .build();
@@ -183,9 +183,14 @@ public class ReviewServiceImpl implements ReviewService {
                 .photoUrls(signedPhotoUrls)
                 .writerMemberId(member.getId())
                 .writerNickname(member.getNickname())
-                .writerProfileImage(member.getProfileURL())
+                .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
                 .totalCount(mc.getTotalCount())
                 .build();
+    }
+
+    private String toSignedProfileUrl(String profileUrl) {
+        if (profileUrl == null || profileUrl.isBlank()) return null;
+        return practiceLogService.generateGetPresignedUrlFromPhotoUrl(profileUrl);
     }
 
     private Review findReview(Long reviewId) {
