@@ -10,4 +10,5 @@ public interface ReviewService {
     ReviewResponse.ReviewId createReview(ReviewRequest.ReviewInfo request, Long classId, Member member);
     ReviewResponse.DeleteReview deleteReview(Long reviewId, Member loginMember);
     Page<ReviewResponse.ReviewInfo> getClassReviewPage(Long classId, Pageable pageable);
+    ReviewResponse.ReviewInfo getReview(Long reviewId);
 }

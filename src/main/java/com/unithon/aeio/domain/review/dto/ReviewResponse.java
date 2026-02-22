@@ -52,6 +52,7 @@ public abstract class ReviewResponse {
         private Long writerMemberId;
         private String writerNickname;
         private String writerProfileImage;
+        private Integer totalCount;
     }
 
 }

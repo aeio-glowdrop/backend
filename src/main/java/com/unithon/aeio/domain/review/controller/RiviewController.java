@@ -59,6 +59,16 @@ public class RiviewController {
                 reviewService.deleteReview(reviewId, member));
     }
 
+    @GetMapping("/{reviewId}")
+    @Operation(summary = "리뷰 단건 조회 API", description = "reviewId에 해당하는 리뷰 정보를 조회합니다.")
+    @Parameters({
+            @Parameter(name = "reviewId", description = "조회할 리뷰 ID")
+    })
+    public ResultResponse<ReviewResponse.ReviewInfo> getReview(@PathVariable Long reviewId) {
+        return ResultResponse.of(ReviewResultCode.REVIEW_INFO,
+                reviewService.getReview(reviewId));
+    }
+
     @GetMapping("/{classId}/reviews")
     @Operation(summary = "클래스 리뷰 목록 조회", description = "특정 클래스의 리뷰를 최신순 페이징으로 조회합니다.")
     @Parameters({

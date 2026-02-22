@@ -154,8 +154,38 @@ public class ReviewServiceImpl implements ReviewService {
                     .writerMemberId(member.getId())
                     .writerProfileImage(member.getProfileURL())
                     .writerNickname(member.getNickname())
+                    .totalCount(mc.getTotalCount())
                     .build();
         });
+    }
+
+    @Override
+    public ReviewResponse.ReviewInfo getReview(Long reviewId) {
+        Review review = findReview(reviewId);
+
+        List<String> rawPhotoUrls = reviewPhotoRepository.findByReview_IdIn(List.of(reviewId))
+                .stream()
+                .map(ReviewPhoto::getPhotoUrl)
+                .toList();
+
+        List<String> signedPhotoUrls = rawPhotoUrls.stream()
+                .map(practiceLogService::generateGetPresignedUrlFromPhotoUrl)
+                .toList();
+
+        var mc = review.getMemberClass();
+        var member = mc.getMember();
+
+        return ReviewResponse.ReviewInfo.builder()
+                .reviewId(review.getId())
+                .rate(review.getRate())
+                .text(review.getText())
+                .createdAt(review.getCreatedAt())
+                .photoUrls(signedPhotoUrls)
+                .writerMemberId(member.getId())
+                .writerNickname(member.getNickname())
+                .writerProfileImage(member.getProfileURL())
+                .totalCount(mc.getTotalCount())
+                .build();
     }
 
     private Review findReview(Long reviewId) {
