@@ -7,6 +7,7 @@ import com.unithon.aeio.domain.member.dto.ApplePublicKeysResponse;
 import com.unithon.aeio.domain.member.dto.AppleTokenResponseDto;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.Provider;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import com.unithon.aeio.global.error.BusinessException;
 import io.jsonwebtoken.Claims;
@@ -73,6 +74,7 @@ public class AppleOauthService {
         // 3. authId(String) 기준으로 Member 조회/생성
         Member member = memberRepository.findByAuthId(appleInfo.getAuthId())
                 .orElseGet(() -> createAppleMember(appleInfo));
+        member.setProvider(Provider.APPLE);
 
         // 4. 우리 서버 access/refresh 발급 + 쿠키 세팅
         String accessToken = issueServerTokens(member, response);
