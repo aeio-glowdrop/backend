@@ -3,6 +3,7 @@ package com.unithon.aeio.domain.member.controller;
 import com.unithon.aeio.domain.member.dto.OauthRequest;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.service.AppleOauthService;
+import com.unithon.aeio.domain.member.service.GoogleOauthService;
 import com.unithon.aeio.domain.member.service.OauthService;
 import com.unithon.aeio.global.result.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,9 +30,10 @@ public class OauthController {
 
     private final OauthService oauthService;
     private final AppleOauthService appleOauthService;
+    private final GoogleOauthService googleOauthService;
 
     @PostMapping("/oauth")
-    @Operation(summary = "로그인 API", description = "카카오톡을 통해 서비스에 로그인하는 API입니다.")
+    @Operation(summary = "카카오 로그인 API", description = "카카오톡을 통해 서비스에 로그인하는 API입니다.")
     public ResultResponse<OauthResponse.ServerAccessTokenInfo> login(@RequestBody OauthRequest.FrontAccessTokenInfo oauthRequest,
                                                                      HttpServletResponse response) { //HTTP 응답 조작: Refresh Token을 클라이언트의 브라우저 쿠키에 저장할 때 사용
         return ResultResponse.of(LOGIN, oauthService.login(oauthRequest, response));
@@ -56,5 +58,13 @@ public class OauthController {
     public ResultResponse<OauthResponse.ServerAccessTokenInfo> appleRedirect(@RequestParam("code") String code,
                                                                              HttpServletResponse response) {
         return ResultResponse.of(LOGIN, appleOauthService.loginApple(code, response));
+    }
+
+    @PostMapping("/oauth/google")
+    @Operation(summary = "Google 로그인 API", description = "Google 액세스 토큰을 통해 서비스에 로그인하는 API입니다.")
+    public ResultResponse<OauthResponse.ServerAccessTokenInfo> loginGoogle(
+            @Valid @RequestBody OauthRequest.FrontAccessTokenInfo oauthRequest,
+            HttpServletResponse response) {
+        return ResultResponse.of(LOGIN, googleOauthService.loginGoogle(oauthRequest.getAccessToken(), response));
     }
 }

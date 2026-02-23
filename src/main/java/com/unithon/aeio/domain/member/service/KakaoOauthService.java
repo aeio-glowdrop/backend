@@ -4,6 +4,7 @@ import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.KakaoInfoResponse;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.Provider;
 import com.unithon.aeio.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -61,6 +62,7 @@ public class KakaoOauthService {
             // 이미 존재하면 업데이트
             existingUser.setName(kakaoInfo.getName());
             existingUser.setEmail(kakaoInfo.getEmail());
+            existingUser.setProvider(Provider.KAKAO);
             memberRepository.save(existingUser);
         } else {
             // 존재하지 않으면 새로운 사용자로 저장
