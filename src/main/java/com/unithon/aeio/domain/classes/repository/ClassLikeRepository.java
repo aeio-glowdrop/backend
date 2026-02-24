@@ -25,4 +25,6 @@ public interface ClassLikeRepository extends JpaRepository<ClassLike, Long> {
         order by cl.createdAt desc
         """)
     Page<Classes> findLikedClassesByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
+    long countByMemberId(Long memberId);
 }

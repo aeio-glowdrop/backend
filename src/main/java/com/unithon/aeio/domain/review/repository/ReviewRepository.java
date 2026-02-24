@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,4 +18,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      */
     @EntityGraph(attributePaths = {"memberClass", "memberClass.member"})
     Page<Review> findByMemberClass_Classes_Id(Long classId, Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.memberClass.member.id = :memberId")
+    long countByMemberId(@Param("memberId") Long memberId);
 }

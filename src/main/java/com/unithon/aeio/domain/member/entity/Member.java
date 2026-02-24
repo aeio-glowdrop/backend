@@ -2,8 +2,6 @@ package com.unithon.aeio.domain.member.entity;
 
 import com.unithon.aeio.domain.classes.entity.ClassLike;
 import com.unithon.aeio.domain.classes.entity.MemberClass;
-import com.unithon.aeio.domain.classes.entity.PracticeLog;
-import com.unithon.aeio.domain.review.entity.Review;
 import com.unithon.aeio.global.entity.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,7 +20,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +60,14 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column
     private AgeGroup ageGroup;
+
+    @Column
+    @Builder.Default
+    private int practiceCount = 0;
+
+    @Column
+    @Builder.Default
+    private int totalExerciseTime = 0;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

@@ -16,4 +16,5 @@ public interface MemberService {
     MemberResponse.NickName updateNickName(Member member, String nickname);
     MemberResponse.MemberId updateProfile(Member member, String profileImageUrl);
     MemberResponse.NickName getNickName(Member member);
+    MemberResponse.MyPage getMyPage(Member member);
 }

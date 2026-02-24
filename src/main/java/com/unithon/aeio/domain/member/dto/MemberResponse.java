@@ -48,4 +48,18 @@ public abstract class MemberResponse {
         private LocalDate today;
         private int streakDays;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPage {
+        private String profileURL;
+        private String nickName;
+        private int practiceCount;
+        private int totalExerciseTime;
+        private int reviewCount;
+        private int subscribedClassCount;
+        private int likedClassCount;
+    }
 }
