@@ -2,9 +2,11 @@ package com.unithon.aeio.domain.member.converter;
 
 
 import com.unithon.aeio.domain.member.dto.AppleInfoResponse;
+import com.unithon.aeio.domain.member.dto.GoogleInfoResponse;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
+import com.unithon.aeio.domain.member.entity.Provider;
 import com.unithon.aeio.domain.member.entity.Worry;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +19,28 @@ public class MemberConverter {
     // 인가 관련, DTO를 엔티티로 변환하는 메소드
     public Member toKakaoUserEntity(OauthResponse.KakaoInfo kakaoInfo) {
         return Member.builder()
-                .authId(kakaoInfo.getAuthId()) // UserDTO의 authId를 User 엔티티의 authId로 설정
-                .name(kakaoInfo.getName()) //카카오톡 이름
+                .authId(kakaoInfo.getAuthId())
+                .name(kakaoInfo.getName())
                 .email(kakaoInfo.getEmail())
-                .refreshToken(kakaoInfo.getRefreshToken()) // UserDTO의 리프레시 토큰을 User 엔티티의 리프레시 토큰으로 설정
+                .refreshToken(kakaoInfo.getRefreshToken())
+                .provider(Provider.KAKAO)
                 .build();
     }
 
     public Member toAppleUserEntity(AppleInfoResponse appleInfo) {
         return Member.builder()
-                .authId(appleInfo.getAuthId())   // String
-                .email(appleInfo.getEmail())     // null일 수도 있음
+                .authId(appleInfo.getAuthId())
+                .email(appleInfo.getEmail())
+                .provider(Provider.APPLE)
+                .build();
+    }
+
+    public Member toGoogleUserEntity(GoogleInfoResponse googleInfo) {
+        return Member.builder()
+                .authId(googleInfo.getAuthId())
+                .name(googleInfo.getName())
+                .email(googleInfo.getEmail())
+                .provider(Provider.GOOGLE)
                 .build();
     }
 

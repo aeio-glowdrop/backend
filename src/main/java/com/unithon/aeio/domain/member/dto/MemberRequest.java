@@ -28,7 +28,6 @@ public abstract class MemberRequest {
         @NotNull(message = "성별은 필수로 입력해야 합니다.")
         private Gender gender;
 
-        @NotNull(message = "연령대는 필수로 입력해야 합니다.")
         private AgeGroup ageGroup;
 
         private String profileURL;

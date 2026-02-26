@@ -68,6 +68,10 @@ public class Member extends BaseTimeEntity {
     @Column
     @Builder.Default
     private int totalExerciseTime = 0;
+  
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Provider provider;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

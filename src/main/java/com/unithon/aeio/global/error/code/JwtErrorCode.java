@@ -15,6 +15,7 @@ public enum JwtErrorCode implements ErrorCode {
     MEMBER_NOT_FOUND_BY_AUTH_ID(405, "EG006", "authId로 멤버를 찾을 수 없습니다."),
     APPLE_LOGIN_FAILED(404, "EJ007", "애플 로그인에 실패하였습니다."),
     NICKNAME_BLANK(404, "EJ008", "닉네임이 비어있습니다."),
+    GOOGLE_LOGIN_FAILED(400, "EJ009", "Google 로그인에 실패하였습니다."),
     ;
 
     private final int status;
