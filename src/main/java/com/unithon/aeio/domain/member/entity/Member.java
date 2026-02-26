@@ -61,13 +61,13 @@ public class Member extends BaseTimeEntity {
     @Column
     private AgeGroup ageGroup;
 
-    @Column
+    @Column(columnDefinition = "int default 0")
     @Builder.Default
-    private int practiceCount = 0;
+    private Integer practiceCount = 0;
 
-    @Column
+    @Column(columnDefinition = "int default 0")
     @Builder.Default
-    private int totalExerciseTime = 0;
+    private Integer totalExerciseTime = 0;
   
     @Enumerated(EnumType.STRING)
     @Column
