@@ -27,7 +27,10 @@ import static com.unithon.aeio.global.error.code.GlobalErrorCode.UNAUTHORIZED;
 import static com.unithon.aeio.global.result.code.MemberResultCode.AGREE;
 import static com.unithon.aeio.global.result.code.MemberResultCode.DELETE_MEMBER;
 import static com.unithon.aeio.global.result.code.MemberResultCode.GET_CURRENT_STREAK;
+import static com.unithon.aeio.global.result.code.MemberResultCode.GET_MYPAGE;
+import static com.unithon.aeio.global.result.code.MemberResultCode.GET_WORRY_LIST;
 import static com.unithon.aeio.global.result.code.MemberResultCode.UPDATE_PROFILE;
+import static com.unithon.aeio.global.result.code.MemberResultCode.UPDATE_WORRY_LIST;
 
 @RestController
 @RequestMapping("/members")
@@ -109,5 +112,24 @@ public class MemberController {
     public ResultResponse<MemberResponse.MemberId> updateProfileImage(@LoginMember Member member, @RequestBody MemberRequest.UpdateProfile request) {
         return ResultResponse.of(UPDATE_PROFILE,
                 memberService.updateProfile(member, request.getProfileImageUrl()));
+    }
+
+    @GetMapping("/mypage")
+    @Operation(summary = "마이페이지 조회 API", description = "로그인한 사용자의 마이페이지 정보를 반환합니다.")
+    public ResultResponse<MemberResponse.MyPage> getMyPage(@LoginMember Member member) {
+        return ResultResponse.of(GET_MYPAGE, memberService.getMyPage(member));
+    }
+
+    @GetMapping("/worryList")
+    @Operation(summary = "고민 부위 조회 API", description = "로그인한 사용자의 고민 부위 목록을 반환합니다.")
+    public ResultResponse<MemberResponse.WorryList> getWorryList(@LoginMember Member member) {
+        return ResultResponse.of(GET_WORRY_LIST, memberService.getWorryList(member));
+    }
+
+    @PatchMapping("/worryList")
+    @Operation(summary = "고민 부위 수정 API", description = "로그인한 사용자의 고민 부위 목록을 수정합니다.")
+    public ResultResponse<MemberResponse.WorryList> updateWorryList(@LoginMember Member member,
+                                                                     @RequestBody @Valid MemberRequest.UpdateWorryList request) {
+        return ResultResponse.of(UPDATE_WORRY_LIST, memberService.updateWorryList(member, request));
     }
 }

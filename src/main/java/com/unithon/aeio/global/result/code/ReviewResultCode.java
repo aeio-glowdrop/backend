@@ -11,6 +11,7 @@ public enum ReviewResultCode implements ResultCode {
     DELETE_REVIEW(200, "SR001", "성공적으로 리뷰를 삭제했습니다."),
     REVIEW_LIST(200, "SR002", "성공적으로 리뷰 리스트를 조회했습니다."),
     REVIEW_INFO(200, "SR003", "성공적으로 리뷰를 조회했습니다."),
+    GET_MY_REVIEWS(200, "SR004", "성공적으로 내 후기 목록을 조회했습니다."),
     ;
     private final int status;
     private final String code;

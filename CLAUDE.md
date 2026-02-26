@@ -193,3 +193,4 @@ public ResultResponse<ClassResponse.PagedLikeList> getMyLikedClasses(
 3. **새 에러 추가** → ErrorCode Enum에 코드 추가 → `throw new BusinessException(...)` 사용
 4. **이미지 처리** → S3 Presigned URL 발급, 트랜잭션 커밋 후 기존 이미지 삭제 (`TransactionSynchronization`)
 5. **N+1 방지** → Lazy Loading 기본 + `findBy...In()` 일괄 조회 후 Map으로 매핑
+6. **메서드 파라미터에 계산 로직 금지** → 계산한 값은 반드시 변수로 먼저 선언 후 전달

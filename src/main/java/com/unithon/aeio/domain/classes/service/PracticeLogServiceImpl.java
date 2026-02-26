@@ -161,9 +161,10 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
         // 운동 1회 누적
         memberClass.setTotalCount(memberClass.getTotalCount() + 1);
+        memberClass.getMember().setPracticeCount(memberClass.getMember().getPracticeCount() + 1);
+        memberClass.getMember().setTotalExerciseTime(memberClass.getMember().getTotalExerciseTime() + classes.getTime());
 
         return practiceLogConverter.toPracticeLogId(log);
-
     }
 
     @Override

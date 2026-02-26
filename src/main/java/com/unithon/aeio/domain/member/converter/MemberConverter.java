@@ -102,5 +102,29 @@ public class MemberConverter {
                 .streakDays(streak)
                 .build();
     }
+
+    public MemberResponse.WorryList toWorryList(List<String> worryList) {
+        return MemberResponse.WorryList.builder()
+                .worryList(worryList)
+                .build();
+    }
+
+    public MemberResponse.MyPage toMyPage(
+            Member member,
+            String signedProfileUrl,
+            int reviewCount,
+            int subscribedClassCount,
+            int likedClassCount
+    ) {
+        return MemberResponse.MyPage.builder()
+                .profileURL(signedProfileUrl)
+                .nickName(member.getNickname())
+                .practiceCount(member.getPracticeCount())
+                .totalExerciseTime(member.getTotalExerciseTime())
+                .reviewCount(reviewCount)
+                .subscribedClassCount(subscribedClassCount)
+                .likedClassCount(likedClassCount)
+                .build();
+    }
 }
 

@@ -6,9 +6,12 @@ import com.unithon.aeio.domain.review.dto.ReviewResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ReviewService {
     ReviewResponse.ReviewId createReview(ReviewRequest.ReviewInfo request, Long classId, Member member);
     ReviewResponse.DeleteReview deleteReview(Long reviewId, Member loginMember);
     Page<ReviewResponse.ReviewInfo> getClassReviewPage(Long classId, Pageable pageable);
     ReviewResponse.ReviewInfo getReview(Long reviewId);
+    List<ReviewResponse.MyReviewItem> getMyReviews(Member member);
 }

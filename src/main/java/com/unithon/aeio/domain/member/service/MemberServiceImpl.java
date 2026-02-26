@@ -1,7 +1,10 @@
 package com.unithon.aeio.domain.member.service;
 
+import com.unithon.aeio.domain.classes.repository.ClassLikeRepository;
+import com.unithon.aeio.domain.classes.repository.MemberClassRepository;
 import com.unithon.aeio.domain.classes.repository.PracticeLogRepository;
 import com.unithon.aeio.domain.classes.service.PracticeLogService;
+import com.unithon.aeio.domain.review.repository.ReviewRepository;
 import com.unithon.aeio.domain.member.converter.MemberConverter;
 import com.unithon.aeio.domain.member.dto.MemberRequest;
 import com.unithon.aeio.domain.member.dto.MemberResponse;
@@ -41,6 +44,9 @@ public class MemberServiceImpl implements MemberService {
     private final PracticeLogRepository practiceLogRepository;
     private final UserAgreementRepository userAgreementRepository;
     private final PracticeLogService practiceLogService;
+    private final ReviewRepository reviewRepository;
+    private final MemberClassRepository memberClassRepository;
+    private final ClassLikeRepository classLikeRepository;
 
     // AWS SDK v2 기준
     private final software.amazon.awssdk.services.s3.S3Client s3Client;
@@ -328,6 +334,49 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberResponse.WorryList getWorryList(Member member) {
+        List<String> worryList = worryRepository.findWorryNamesByMemberId(member.getId());
+        return memberConverter.toWorryList(worryList);
+    }
+
+    @Override
+    public MemberResponse.WorryList updateWorryList(Member member, MemberRequest.UpdateWorryList request) {
+        worryRepository.deleteByMemberId(member.getId());
+
+        List<Worry> newWorries = request.getWorryList().stream()
+                .map(name -> Worry.builder()
+                        .name(name)
+                        .member(member)
+                        .build())
+                .toList();
+        worryRepository.saveAll(newWorries);
+
+        return memberConverter.toWorryList(request.getWorryList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberResponse.MyPage getMyPage(Member member) {
+        String signedProfileUrl = null;
+        if (member.getProfileURL() != null && !member.getProfileURL().isBlank()) {
+            signedProfileUrl = practiceLogService.generateGetPresignedUrlFromPhotoUrl(member.getProfileURL());
+        }
+
+        int reviewCount = (int) reviewRepository.countByMemberId(member.getId());
+        int subscribedClassCount = (int) memberClassRepository.countByMemberId(member.getId());
+        int likedClassCount = (int) classLikeRepository.countByMemberId(member.getId());
+
+        return memberConverter.toMyPage(
+                member,
+                signedProfileUrl,
+                reviewCount,
+                subscribedClassCount,
+                likedClassCount
+        );
     }
 
     private record ExtractedS3(String bucket, String key) {}

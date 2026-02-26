@@ -16,4 +16,5 @@ public interface MemberClassRepository extends JpaRepository<MemberClass, Long> 
     @EntityGraph(attributePaths = "classes") // N+1 방지
     List<MemberClass> findAllByMemberIdOrderByIdDesc(Long memberId);
     long countByClassesId(Long classId);
+    long countByMemberId(Long memberId);
 }

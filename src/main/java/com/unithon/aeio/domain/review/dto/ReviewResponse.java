@@ -55,4 +55,18 @@ public abstract class ReviewResponse {
         private Integer totalCount;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyReviewItem {
+        private Long reviewId;
+        private Double rate;
+        private String text;
+        private List<String> photoUrls;
+        private LocalDateTime createdAt;
+        private Integer totalCount;
+        private String className;
+    }
+
 }

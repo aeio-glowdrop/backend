@@ -6,6 +6,8 @@ import com.unithon.aeio.domain.member.dto.OauthRequest;
 import com.unithon.aeio.domain.member.dto.OauthResponse;
 import com.unithon.aeio.domain.member.entity.Member;
 
+import java.util.List;
+
 public interface MemberService {
     MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member);
     MemberResponse.MemberInfo getMemberInfo(Member member);
@@ -16,4 +18,7 @@ public interface MemberService {
     MemberResponse.NickName updateNickName(Member member, String nickname);
     MemberResponse.MemberId updateProfile(Member member, String profileImageUrl);
     MemberResponse.NickName getNickName(Member member);
+    MemberResponse.MyPage getMyPage(Member member);
+    MemberResponse.WorryList getWorryList(Member member);
+    MemberResponse.WorryList updateWorryList(Member member, MemberRequest.UpdateWorryList request);
 }

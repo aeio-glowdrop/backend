@@ -18,6 +18,9 @@ public enum MemberResultCode implements ResultCode {
     AGREE(200, "SM008", "성공적으로 약관에 동의하였습니다."),
     UPDATE_PROFILE(200, "SM009", "프로필 사진을 성공적으로 업로드했습니다."),
     UPDATE_NICKNAME(200, "SM010", "닉네임을 성공적으로 수정했습니다."),
+    GET_MYPAGE(200, "SM011", "성공적으로 마이페이지 정보를 조회했습니다."),
+    GET_WORRY_LIST(200, "SM012", "성공적으로 고민 부위 목록을 조회했습니다."),
+    UPDATE_WORRY_LIST(200, "SM013", "성공적으로 고민 부위 목록을 수정했습니다."),
     ;
     private final int status;
     private final String code;

@@ -188,6 +188,34 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReviewResponse.MyReviewItem> getMyReviews(Member member) {
+        List<Review> reviews = reviewRepository.findByMemberClass_Member_Id(member.getId());
+
+        List<Long> reviewIds = reviews.stream()
+                .map(Review::getId)
+                .toList();
+
+        Map<Long, List<String>> photoMap = reviewIds.isEmpty()
+                ? Map.of()
+                : reviewPhotoRepository.findByReview_IdIn(reviewIds).stream()
+                .collect(Collectors.groupingBy(
+                        rp -> rp.getReview().getId(),
+                        Collectors.mapping(ReviewPhoto::getPhotoUrl, Collectors.toList())
+                ));
+
+        return reviews.stream()
+                .map(review -> {
+                    List<String> signedPhotoUrls = photoMap.getOrDefault(review.getId(), List.of())
+                            .stream()
+                            .map(practiceLogService::generateGetPresignedUrlFromPhotoUrl)
+                            .toList();
+                    return reviewConverter.toMyReviewItem(review, signedPhotoUrls);
+                })
+                .toList();
+    }
+
     private String toSignedProfileUrl(String profileUrl) {
         if (profileUrl == null || profileUrl.isBlank()) return null;
         return practiceLogService.generateGetPresignedUrlFromPhotoUrl(profileUrl);
