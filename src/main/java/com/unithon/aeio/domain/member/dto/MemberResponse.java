@@ -62,4 +62,12 @@ public abstract class MemberResponse {
         private int subscribedClassCount;
         private int likedClassCount;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WorryList {
+        private List<String> worryList;
+    }
 }

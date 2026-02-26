@@ -338,6 +338,28 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
+    public MemberResponse.WorryList getWorryList(Member member) {
+        List<String> worryList = worryRepository.findWorryNamesByMemberId(member.getId());
+        return memberConverter.toWorryList(worryList);
+    }
+
+    @Override
+    public MemberResponse.WorryList updateWorryList(Member member, MemberRequest.UpdateWorryList request) {
+        worryRepository.deleteByMemberId(member.getId());
+
+        List<Worry> newWorries = request.getWorryList().stream()
+                .map(name -> Worry.builder()
+                        .name(name)
+                        .member(member)
+                        .build())
+                .toList();
+        worryRepository.saveAll(newWorries);
+
+        return memberConverter.toWorryList(request.getWorryList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public MemberResponse.MyPage getMyPage(Member member) {
         String signedProfileUrl = null;
         if (member.getProfileURL() != null && !member.getProfileURL().isBlank()) {

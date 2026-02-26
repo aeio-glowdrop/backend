@@ -90,6 +90,12 @@ public class MemberConverter {
                 .build();
     }
 
+    public MemberResponse.WorryList toWorryList(List<String> worryList) {
+        return MemberResponse.WorryList.builder()
+                .worryList(worryList)
+                .build();
+    }
+
     public MemberResponse.MyPage toMyPage(
             Member member,
             String signedProfileUrl,
