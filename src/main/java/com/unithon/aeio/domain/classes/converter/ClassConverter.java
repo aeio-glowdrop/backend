@@ -36,7 +36,7 @@ public class ClassConverter {
                 .build();
     }
 
-    public ClassResponse.ClassInfo toSubsClass(MemberClass mc) {
+    public ClassResponse.ClassInfo toSubsClass(MemberClass mc, String signedThumbnailUrl) {
         Classes c = mc.getClasses();
         return ClassResponse.ClassInfo
                 .builder()
@@ -44,7 +44,7 @@ public class ClassConverter {
                 .className(c.getClassName())
                 .classType(c.getClassType())
                 .teacher(c.getTeacher())
-                .thumbnailUrl(c.getThumbnailUrl())
+                .thumbnailUrl(signedThumbnailUrl)
                 .level(c.getLevel())
                 .focus1(c.getFocus1())
                 .focus2(c.getFocus2())

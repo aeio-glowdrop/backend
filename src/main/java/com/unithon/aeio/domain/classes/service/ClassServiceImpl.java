@@ -35,6 +35,7 @@ public class ClassServiceImpl implements ClassService {
     private final ClassConverter classConverter;
     private final MemberClassRepository memberClassRepository;
     private final ClassLikeRepository classLikeRepository;
+    private final PracticeLogService practiceLogService;
 
     @Override
     public ClassResponse.ClassId createClass(ClassRequest.ClassInfo request) {
@@ -138,7 +139,7 @@ public class ClassServiceImpl implements ClassService {
         List<MemberClass> subs = memberClassRepository.findAllByMemberIdOrderByIdDesc(member.getId());
         List<ClassResponse.ClassInfo> items = subs
                 .stream()
-                .map(classConverter::toSubsClass)
+                .map(mc -> classConverter.toSubsClass(mc, toSignedThumbnailUrl(mc.getClasses().getThumbnailUrl())))
                 .toList();
         return classConverter.toSubsList(items);
     }
@@ -153,10 +154,15 @@ public class ClassServiceImpl implements ClassService {
         return page.map(c -> ClassResponse.ClassInfo.builder()
                 .classId(c.getId())
                 .className(c.getClassName())
-                .thumbnailUrl(c.getThumbnailUrl())
+                .thumbnailUrl(toSignedThumbnailUrl(c.getThumbnailUrl()))
                 .classType(c.getClassType())
                 .teacher(c.getTeacher())
                 .build());
+    }
+
+    private String toSignedThumbnailUrl(String thumbnailUrl) {
+        if (thumbnailUrl == null || thumbnailUrl.isBlank()) return null;
+        return practiceLogService.generateGetPresignedUrlFromPhotoUrl(thumbnailUrl);
     }
 
     @Override
