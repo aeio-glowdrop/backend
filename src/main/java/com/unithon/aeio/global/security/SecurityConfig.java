@@ -52,6 +52,8 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/v3/api-docs/**",
                                 "/actuator/**").permitAll() // 스웨거 경로는 인증 없이 접근 가능
+                        .requestMatchers("/review/*/reviews").permitAll() // 클래스 리뷰 목록 조회는 비로그인 허용
+                        .requestMatchers("/review/*").permitAll() // 리뷰 단건 조회는 비로그인 허용 (JwtFilter에서 숫자 ID만 통과)
                         .anyRequest().authenticated()) // 그 외 모든 요청은 인증이 필요
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않고, JWT로 인증을 관리
                 .formLogin(AbstractHttpConfigurer::disable) // 로그인 폼을 사용하지 않도록 설정
@@ -74,7 +76,8 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/v3/api-docs/**", // 스웨거 경로도 보안 필터에서 제외
                                 "/actuator/**"
-                        );
+                        )
+                        .requestMatchers("/review/*/reviews"); // 클래스 리뷰 목록 조회는 모든 필터에서 제외
     }
 }
 

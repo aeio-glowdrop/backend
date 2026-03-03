@@ -47,6 +47,12 @@ public class JwtFilter extends GenericFilterBean {
         // 요청 헤더에서 JWT 토큰을 추출
         String jwt = resolveToken(httpServletRequest);
 
+        // GET /review/{숫자 ID} 는 비로그인 허용 경로 — JWT 검증 없이 통과
+        if (isPublicReviewDetailPath(httpServletRequest)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         // JWT가 존재하고, 유효한 경우
         if (StringUtils.hasText(jwt) && jwtTokenService.validateToken(jwt)) {
 
@@ -70,6 +76,12 @@ public class JwtFilter extends GenericFilterBean {
 
         // 필터 체인의 다음 필터를 호출하여 요청을 계속 처리
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    // GET /review/{숫자 ID} 경로만 비로그인 허용 (/review/my 등 문자열 ID는 제외)
+    private boolean isPublicReviewDetailPath(HttpServletRequest request) {
+        return "GET".equals(request.getMethod())
+                && request.getServletPath().matches("/review/\\d+");
     }
 
     // HTTP 요청의 Authorization 헤더에서 JWT 토큰을 추출하는 메소드
