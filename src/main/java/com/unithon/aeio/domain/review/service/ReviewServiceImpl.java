@@ -51,11 +51,14 @@ public class ReviewServiceImpl implements ReviewService {
         MemberClass memberClass = practiceLogService.findMemberClass(member.getId(), classId);
 
         // 3) 리뷰 엔티티 생성 및 저장
+        int streakAtCreation = practiceLogService.getClassStreak(classId, member).getStreak();
         Review review = Review
                 .builder()
                 .rate(req.getRate())
                 .text(req.getReviewText())
                 .memberClass(memberClass)   // Review -> MemberClass (N:1)
+                .reviewTotalCount(memberClass.getTotalCount())
+                .reviewStreakCount(streakAtCreation)
                 .build();
         Review saved = reviewRepository.save(review);
 
@@ -154,7 +157,9 @@ public class ReviewServiceImpl implements ReviewService {
                     .writerMemberId(member.getId())
                     .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
                     .writerNickname(member.getNickname())
-                    .totalCount(mc.getTotalCount())
+                    .reviewTotalCount(r.getReviewTotalCount())
+                    .reviewStreakCount(r.getReviewStreakCount())
+                    .classId(mc.getClasses().getId())
                     .build();
         });
     }
@@ -184,13 +189,15 @@ public class ReviewServiceImpl implements ReviewService {
                 .writerMemberId(member.getId())
                 .writerNickname(member.getNickname())
                 .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
-                .totalCount(mc.getTotalCount())
+                .reviewTotalCount(review.getReviewTotalCount())
+                .reviewStreakCount(review.getReviewStreakCount())
+                .classId(mc.getClasses().getId())
                 .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReviewResponse.MyReviewItem> getMyReviews(Member member) {
+    public List<ReviewResponse.ReviewInfo> getMyReviews(Member member) {
         List<Review> reviews = reviewRepository.findByMemberClass_Member_Id(member.getId());
 
         List<Long> reviewIds = reviews.stream()
@@ -211,7 +218,20 @@ public class ReviewServiceImpl implements ReviewService {
                             .stream()
                             .map(practiceLogService::generateGetPresignedUrlFromPhotoUrl)
                             .toList();
-                    return reviewConverter.toMyReviewItem(review, signedPhotoUrls);
+                    var mc = review.getMemberClass();
+                    return ReviewResponse.ReviewInfo.builder()
+                            .reviewId(review.getId())
+                            .rate(review.getRate())
+                            .text(review.getText())
+                            .photoUrls(signedPhotoUrls)
+                            .createdAt(review.getCreatedAt())
+                            .writerMemberId(member.getId())
+                            .writerNickname(member.getNickname())
+                            .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
+                            .reviewTotalCount(review.getReviewTotalCount())
+                            .reviewStreakCount(review.getReviewStreakCount())
+                            .classId(mc.getClasses().getId())
+                            .build();
                 })
                 .toList();
     }

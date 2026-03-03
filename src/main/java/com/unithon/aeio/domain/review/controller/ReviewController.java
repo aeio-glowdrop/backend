@@ -71,7 +71,7 @@ public class ReviewController {
 
     @GetMapping("/my")
     @Operation(summary = "내 후기 목록 조회 API", description = "로그인한 사용자가 작성한 모든 후기 목록을 반환합니다.")
-    public ResultResponse<List<ReviewResponse.MyReviewItem>> getMyReviews(@LoginMember Member member) {
+    public ResultResponse<List<ReviewResponse.ReviewInfo>> getMyReviews(@LoginMember Member member) {
         return ResultResponse.of(GET_MY_REVIEWS, reviewService.getMyReviews(member));
     }
 

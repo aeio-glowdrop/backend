@@ -5,9 +5,6 @@ import com.unithon.aeio.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Component
 public class ReviewConverter {
     // class Id만 반환
@@ -35,16 +32,4 @@ public class ReviewConverter {
                 .build();
     }
 
-    public ReviewResponse.MyReviewItem toMyReviewItem(Review review, List<String> signedPhotoUrls) {
-        var mc = review.getMemberClass();
-        return ReviewResponse.MyReviewItem.builder()
-                .reviewId(review.getId())
-                .rate(review.getRate())
-                .text(review.getText())
-                .photoUrls(signedPhotoUrls)
-                .createdAt(review.getCreatedAt())
-                .totalCount(mc.getTotalCount())
-                .className(mc.getClasses().getClassName())
-                .build();
-    }
 }

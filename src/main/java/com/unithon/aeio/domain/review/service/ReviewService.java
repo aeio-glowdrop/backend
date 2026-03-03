@@ -13,5 +13,5 @@ public interface ReviewService {
     ReviewResponse.DeleteReview deleteReview(Long reviewId, Member loginMember);
     Page<ReviewResponse.ReviewInfo> getClassReviewPage(Long classId, Pageable pageable);
     ReviewResponse.ReviewInfo getReview(Long reviewId);
-    List<ReviewResponse.MyReviewItem> getMyReviews(Member member);
+    List<ReviewResponse.ReviewInfo> getMyReviews(Member member);
 }

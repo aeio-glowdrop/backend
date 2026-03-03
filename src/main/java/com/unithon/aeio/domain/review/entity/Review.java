@@ -48,6 +48,12 @@ public class Review extends BaseTimeEntity {
     @Column
     private String text;
 
+    @Column(name = "review_total_count")
+    private Integer reviewTotalCount;
+
+    @Column(name = "review_streak_count")
+    private Integer reviewStreakCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_class_id")
     private MemberClass memberClass;
