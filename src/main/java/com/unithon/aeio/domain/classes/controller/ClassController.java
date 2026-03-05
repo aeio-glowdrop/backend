@@ -118,4 +118,10 @@ public class ClassController {
                 classService.getClassInfo(classId));
     }
 
+    @GetMapping("/linktree")
+    @Operation(summary = "링크트리 URL 조회 API", description = "서비스 링크트리 URL을 반환하는 API입니다.")
+    public ResultResponse<String> getLinktreeUrl() {
+        return ResultResponse.of(ClassResultCode.GET_LINKTREE_URL, "https://linktr.ee/glowdrop.ai");
+    }
+
 }
