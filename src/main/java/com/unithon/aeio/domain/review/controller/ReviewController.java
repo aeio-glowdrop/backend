@@ -87,7 +87,8 @@ public class ReviewController {
             @Parameter(hidden = true) Pageable pageable
     ) {
         Page<ReviewResponse.ReviewInfo> page = reviewService.getClassReviewPage(classId, pageable);
+        Double averageRate = reviewService.getAverageRateByClassId(classId);
         return ResultResponse.of(ReviewResultCode.REVIEW_LIST,
-                reviewConverter.toPagedReviewList(classId, page));
+                reviewConverter.toPagedReviewList(classId, averageRate, page));
     }
 }

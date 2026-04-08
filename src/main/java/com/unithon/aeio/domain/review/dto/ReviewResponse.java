@@ -32,6 +32,7 @@ public abstract class ReviewResponse {
     @AllArgsConstructor
     public static class PagedReviewList {
         private Long classId;
+        private Double averageRate;
         private List<ReviewInfo> reviews;
         private int page;
         private long totalElements;

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AEIO System Architecture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "Apple SD Gothic Neo", "Noto Sans KR",
+                   "Malgun Gothic", sans-serif;
+      min-height: 100vh;
+    }
+
+    .page-wrapper {
+      padding: 40px 48px 80px;
+      min-width: 1700px;
+      overflow-x: auto;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: #f8fafc;
+      margin-bottom: 5px;
+    }
+    .page-subtitle {
+      font-size: 12.5px;
+      color: #475569;
+      margin-bottom: 28px;
+      letter-spacing: 0.02em;
+    }
+
+    /* 범례 */
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      color: #94a3b8;
+    }
+    .legend-dot {
+      width: 9px; height: 9px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* 캔버스 */
+    .diagram-canvas {
+      position: relative;
+      width: 1600px;
+      height: 1140px;
+    }
+
+    /* 그룹 박스 (모두 캔버스 기준 절대좌표) */
+    .grp {
+      position: absolute;
+      border-radius: 12px;
+      border: 1.5px solid;
+      pointer-events: none;
+    }
+    .grp-label {
+      position: absolute;
+      top: -10px;
+      left: 14px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 1px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* 노드 박스 */
+    .nd {
+      position: absolute;
+      border-radius: 8px;
+      border: 1px solid;
+      padding: 9px 13px;
+      cursor: default;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .nd:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+    .nd-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 3px;
+    }
+    .nd-body {
+      font-size: 10px;
+      line-height: 1.6;
+      opacity: 0.72;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin: 1px 1px 0 0;
+      opacity: 0.85;
+    }
+
+    /* 색상 팔레트 */
+    .c-blue  { background:rgba(59,130,246,.13); border-color:#3b82f6; color:#bfdbfe; }
+    .c-orange{ background:rgba(249,115,22,.13); border-color:#f97316; color:#fed7aa; }
+    .c-green { background:rgba(34,197,94,.13);  border-color:#22c55e; color:#bbf7d0; }
+    .c-teal  { background:rgba(20,184,166,.13); border-color:#14b8a6; color:#99f6e4; }
+    .c-purple{ background:rgba(168,85,247,.13); border-color:#a855f7; color:#e9d5ff; }
+    .c-yellow{ background:rgba(234,179,8,.13);  border-color:#eab308; color:#fef08a; }
+    .c-gray  { background:rgba(107,114,128,.13);border-color:#6b7280; color:#d1d5db; }
+    .c-cyan  { background:rgba(6,182,212,.13);  border-color:#06b6d4; color:#a5f3fc; }
+
+    /* 그룹 테두리 색 */
+    .gb-blue   { border-color:#3b82f6; background:rgba(59,130,246,.04); }
+    .gb-orange { border-color:#f97316; background:rgba(249,115,22,.04); }
+    .gb-gray   { border-color:#6b7280; background:rgba(107,114,128,.04); }
+    .gb-amber  { border-color:#f59e0b; background:rgba(245,158,11,.03); }
+    .gb-green  { border-color:#22c55e; background:rgba(34,197,94,.04); border-style:dashed; }
+    .gb-lime   { border-color:#84cc16; background:rgba(132,204,22,.03); border-style:dashed; }
+    .gb-yellow { border-color:#eab308; background:rgba(234,179,8,.04);  border-style:dashed; }
+    .gb-purple { border-color:#a855f7; background:rgba(168,85,247,.04); border-style:dashed; }
+    .gb-gray2  { border-color:#6b7280; background:rgba(107,114,128,.04);border-style:dashed; }
+
+    /* SVG 오버레이 */
+    .svg-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1600px;
+      height: 1140px;
+      pointer-events: none;
+    }
+
+    /* 플로우 범례 */
+    .flow-legend {
+      margin-top: 28px;
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .fl-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #94a3b8;
+    }
+    .fl-line {
+      width: 28px;
+      height: 0;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <h1 class="page-title">AEIO System Architecture</h1>
+  <p class="page-subtitle">얼굴 요가 클래스 플랫폼 &nbsp;&middot;&nbsp; Spring Boot 3.2.5 &nbsp;&middot;&nbsp; AWS ap-northeast-2 &nbsp;&middot;&nbsp; 2026</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>클라이언트</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>OAuth 외부 서비스</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Spring Boot 컴포넌트</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#14b8a6"></div>JPA / 필터</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>DB / 스토리지</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div>모니터링</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div>CI/CD</div>
+  </div>
+
+  <!--
+    ════════════════════════════════════════════════════════════
+    레이아웃 설계 (캔버스 1600 × 1140, 모든 px은 캔버스 기준)
+
+    열 기준:
+      col-A : 좌측 외부 그룹 (클라이언트/OAuth/GitHub)  left 18
+      col-B : AWS 내부 시작                              left 210
+      col-C : Spring Boot 노드 좌측                      left 246
+      col-D : 모니터링 컬럼                              left 870
+      col-E : RDS/S3/CodeDeploy 컬럼                     left 1140
+
+    행 기준:
+      row-top     : 55  (Security Filter)
+      row-ctrl    : 180 (Controllers)
+      row-global  : 355 (Global)
+      row-svc     : 510 (Services)
+      row-jpa     : 700 (JPA)
+      row-actuator: 870 (Actuator)
+    ════════════════════════════════════════════════════════════
+  -->
+
+  <div class="diagram-canvas" id="canvas">
+
+    <!-- ══ 그룹 박스들 ══ -->
+
+    <!-- 클라이언트 그룹 -->
+    <div class="grp gb-blue" style="left:10px;top:50px;width:170px;height:120px;">
+      <span class="grp-label" style="background:#1e3a5f;color:#60a5fa;">Client</span>
+    </div>
+
+    <!-- OAuth 그룹 -->
+    <div class="grp gb-orange" style="left:10px;top:220px;width:170px;height:230px;">
+      <span class="grp-label" style="background:#431407;color:#fb923c;">OAuth Services</span>
+    </div>
+
+    <!-- GitHub 그룹 -->
+    <div class="grp gb-gray" style="left:10px;top:505px;width:170px;height:120px;">
+      <span class="grp-label" style="background:#1f2937;color:#9ca3af;">GitHub</span>
+    </div>
+
+    <!-- AWS 외곽 -->
+    <div class="grp gb-amber" style="left:200px;top:20px;width:1385px;height:1100px;">
+      <span class="grp-label" style="background:#451a03;color:#fbbf24;">AWS ap-northeast-2</span>
+    </div>
+
+    <!-- EC2 그룹 -->
+    <div class="grp gb-green" style="left:218px;top:42px;width:900px;height:1060px;">
+      <span class="grp-label" style="background:#052e16;color:#4ade80;">EC2 Ubuntu</span>
+    </div>
+
+    <!-- Spring Boot 앱 서브그룹 -->
+    <div class="grp gb-lime" style="left:234px;top:62px;width:610px;height:1030px;">
+      <span class="grp-label" style="background:#1a2e05;color:#bef264;">Spring Boot App :8081</span>
+    </div>
+
+    <!-- 모니터링 서브그룹 -->
+    <div class="grp gb-yellow" style="left:860px;top:62px;width:252px;height:1030px;">
+      <span class="grp-label" style="background:#422006;color:#fde047;">Docker Compose (Monitoring)</span>
+    </div>
+
+    <!-- RDS 서브그룹 -->
+    <div class="grp gb-purple" style="left:1138px;top:42px;width:432px;height:190px;">
+      <span class="grp-label" style="background:#2e1065;color:#c084fc;">AWS RDS MySQL</span>
+    </div>
+
+    <!-- S3 서브그룹 -->
+    <div class="grp gb-purple" style="left:1138px;top:256px;width:432px;height:195px;">
+      <span class="grp-label" style="background:#2e1065;color:#c084fc;">AWS S3</span>
+    </div>
+
+    <!-- CodeDeploy 서브그룹 -->
+    <div class="grp gb-gray2" style="left:1138px;top:475px;width:432px;height:110px;">
+      <span class="grp-label" style="background:#1f2937;color:#9ca3af;">AWS CodeDeploy</span>
+    </div>
+
+    <!-- ══ 노드들 (캔버스 기준 절대좌표) ══ -->
+
+    <!-- ─ 클라이언트 ─ -->
+    <div class="nd c-blue" id="n-ios" style="left:22px;top:80px;width:146px;">
+      <div class="nd-title">iOS App</div>
+      <div class="nd-body">Swift / SwiftUI<br>JWT Bearer Token</div>
+    </div>
+
+    <!-- ─ OAuth ─ -->
+    <div class="nd c-orange" id="n-kakao" style="left:22px;top:248px;width:146px;">
+      <div class="nd-title">Kakao OAuth</div>
+      <div class="nd-body">kapi.kakao.com</div>
+    </div>
+    <div class="nd c-orange" id="n-apple" style="left:22px;top:318px;width:146px;">
+      <div class="nd-title">Apple OAuth</div>
+      <div class="nd-body">appleid.apple.com</div>
+    </div>
+    <div class="nd c-orange" id="n-google" style="left:22px;top:388px;width:146px;">
+      <div class="nd-title">Google OAuth</div>
+      <div class="nd-body">googleapis.com</div>
+    </div>
+
+    <!-- ─ GitHub ─ -->
+    <div class="nd c-gray" id="n-github" style="left:22px;top:530px;width:146px;">
+      <div class="nd-title">GitHub</div>
+      <div class="nd-body">Repository<br>GitHub Actions (CI/CD)</div>
+    </div>
+
+    <!-- ─ Security Filter Chain ─ -->
+    <div class="nd c-teal" id="n-sec" style="left:250px;top:88px;width:264px;">
+      <div class="nd-title">Security Filter Chain</div>
+      <div class="nd-body">
+        <span class="badge" style="background:rgba(20,184,166,.25);color:#5eead4;">1st</span> ExceptionHandlerFilter<br>
+        <span class="badge" style="background:rgba(20,184,166,.25);color:#5eead4;">2nd</span> JwtFilter
+      </div>
+    </div>
+
+    <!-- ─ Controllers ─ -->
+    <div class="nd c-green" id="n-ctrl" style="left:250px;top:200px;width:264px;">
+      <div class="nd-title">Controllers</div>
+      <div class="nd-body">
+        OauthController &nbsp;·&nbsp; MemberController<br>
+        ClassController &nbsp;·&nbsp; PracticeLogController<br>
+        ReviewController
+      </div>
+    </div>
+
+    <!-- ─ Global ─ -->
+    <div class="nd c-cyan" id="n-global" style="left:250px;top:360px;width:264px;">
+      <div class="nd-title">Global Layer</div>
+      <div class="nd-body">
+        GlobalExceptionHandler<br>
+        S3 PresignedURL 발급<br>
+        <span class="badge" style="background:rgba(6,182,212,.25);color:#67e8f9;">@LoginMember</span>
+        <span class="badge" style="background:rgba(6,182,212,.25);color:#67e8f9;">ResultResponse</span>
+      </div>
+    </div>
+
+    <!-- ─ Services ─ -->
+    <div class="nd c-green" id="n-svc" style="left:250px;top:510px;width:264px;">
+      <div class="nd-title">Services</div>
+      <div class="nd-body">
+        OauthService &nbsp;·&nbsp; JwtTokenService<br>
+        MemberService &nbsp;·&nbsp; ClassService<br>
+        PracticeLogService &nbsp;·&nbsp; ReviewService
+      </div>
+    </div>
+
+    <!-- ─ JPA ─ -->
+    <div class="nd c-teal" id="n-jpa" style="left:250px;top:700px;width:264px;">
+      <div class="nd-title">JPA / Hibernate</div>
+      <div class="nd-body">
+        Repositories &nbsp;·&nbsp; Entities<br>
+        Converters &nbsp;·&nbsp; Batch Fetch 500
+      </div>
+    </div>
+
+    <!-- ─ Actuator ─ -->
+    <div class="nd c-cyan" id="n-act" style="left:250px;top:870px;width:264px;">
+      <div class="nd-title">Actuator</div>
+      <div class="nd-body">/actuator/prometheus<br>메트릭 엔드포인트 노출</div>
+    </div>
+
+    <!-- ─ Prometheus ─ -->
+    <div class="nd c-yellow" id="n-prom" style="left:876px;top:88px;width:220px;">
+      <div class="nd-title">Prometheus</div>
+      <div class="nd-body">:9090<br>메트릭 수집 &amp; 저장</div>
+    </div>
+
+    <!-- ─ Grafana ─ -->
+    <div class="nd c-yellow" id="n-grafana" style="left:876px;top:235px;width:220px;">
+      <div class="nd-title">Grafana</div>
+      <div class="nd-body">:3000 &nbsp;·&nbsp; aeio.online/grafana<br>대시보드 시각화</div>
+    </div>
+
+    <!-- ─ MySQL Exporter ─ -->
+    <div class="nd c-yellow" id="n-mex" style="left:876px;top:395px;width:220px;">
+      <div class="nd-title">MySQL Exporter</div>
+      <div class="nd-body">:9104<br>RDS 메트릭 수집</div>
+    </div>
+
+    <!-- ─ AWS RDS ─ -->
+    <div class="nd c-purple" id="n-rds" style="left:1154px;top:70px;width:398px;">
+      <div class="nd-title">AWS RDS MySQL</div>
+      <div class="nd-body">
+        aeio-dbdb.c7ko2i604hh3<br>.ap-northeast-2.rds.amazonaws.com<br>
+        DB: aeio &nbsp;&nbsp; Port: 3306
+      </div>
+    </div>
+
+    <!-- ─ S3 photo ─ -->
+    <div class="nd c-purple" id="n-s3p" style="left:1154px;top:286px;width:190px;">
+      <div class="nd-title">aeio-photo2</div>
+      <div class="nd-body">사용자 사진<br>photo/ &amp; default/ 경로</div>
+    </div>
+
+    <!-- ─ S3 cicd ─ -->
+    <div class="nd c-purple" id="n-s3c" style="left:1358px;top:286px;width:190px;">
+      <div class="nd-title">aeio-cicd-bucket2</div>
+      <div class="nd-body">배포 아티팩트<br>JAR 파일 업로드</div>
+    </div>
+
+    <!-- ─ CodeDeploy ─ -->
+    <div class="nd c-gray" id="n-cd" style="left:1154px;top:505px;width:398px;">
+      <div class="nd-title">AWS CodeDeploy</div>
+      <div class="nd-body">stop.sh &rarr; start.sh &nbsp;|&nbsp; 무중단 배포</div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+         SVG 화살표 레이어
+         모든 좌표는 캔버스(.diagram-canvas) 기준
+    ══════════════════════════════════════════════ -->
+    <svg class="svg-layer" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- 각 색상별 화살촉 마커 -->
+        <marker id="m-blue"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#3b82f6"/></marker>
+        <marker id="m-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#f97316"/></marker>
+        <marker id="m-green"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#22c55e"/></marker>
+        <marker id="m-teal"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#14b8a6"/></marker>
+        <marker id="m-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#a855f7"/></marker>
+        <marker id="m-yellow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#eab308"/></marker>
+        <marker id="m-gray"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#9ca3af"/></marker>
+        <marker id="m-cyan"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#06b6d4"/></marker>
+      </defs>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 1: 인증 플로우 (파란색)
+        iOS → Security Filter → Controllers → Services
+        ────────────────────────────────────────────────────────
+
+        iOS 노드 오른쪽 끝: left=22+146=168, top=80+높이/2≈102
+        Security Filter 왼쪽: left=250, top=88+높이/2≈112
+      -->
+      <!-- iOS → Security Filter Chain -->
+      <path d="M 168,105 L 250,113"
+            stroke="#3b82f6" stroke-width="2" fill="none"
+            marker-end="url(#m-blue)"/>
+      <text x="195" y="102" fill="#60a5fa" font-size="10" text-anchor="middle">JWT Bearer</text>
+
+      <!-- Security Filter → Controllers (수직) -->
+      <path d="M 382,152 L 382,200"
+            stroke="#3b82f6" stroke-width="2" fill="none"
+            marker-end="url(#m-blue)"/>
+
+      <!-- Controllers → Global (수직) -->
+      <path d="M 382,285 L 382,360"
+            stroke="#22c55e" stroke-width="1.8" fill="none"
+            marker-end="url(#m-green)"/>
+      <text x="392" y="330" fill="#4ade80" font-size="10">위임</text>
+
+      <!-- Global → Services (수직) -->
+      <path d="M 382,430 L 382,510"
+            stroke="#22c55e" stroke-width="1.8" fill="none"
+            marker-end="url(#m-green)"/>
+
+      <!-- Services → JPA (수직) -->
+      <path d="M 382,595 L 382,700"
+            stroke="#14b8a6" stroke-width="1.8" fill="none"
+            marker-end="url(#m-teal)"/>
+      <text x="392" y="650" fill="#2dd4bf" font-size="10">JPA</text>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 2: OAuth 플로우 (오렌지)
+        iOS → OauthController(Controller) → Services
+             → 외부 OAuth (Kakao/Apple/Google) → 토큰 발급
+        ────────────────────────────────────────────────────────
+      -->
+      <!-- Services(OauthService) 왼쪽 → OAuth 그룹 우측 (수평)
+           Services: left=250, top=510+높이/2≈555 → left edge 250
+           OAuth 그룹 right: left=10+170=180
+           중간 경유: x=202 (그룹 사이 공간)
+      -->
+      <!-- OauthService ↔ Kakao -->
+      <path d="M 250,543 L 185,290"
+            stroke="#f97316" stroke-width="1.8" fill="none"
+            marker-end="url(#m-orange)"
+            marker-start="url(#m-orange)"/>
+
+      <!-- OauthService ↔ Apple -->
+      <path d="M 250,551 L 185,348"
+            stroke="#f97316" stroke-width="1.8" fill="none"
+            marker-end="url(#m-orange)"
+            marker-start="url(#m-orange)"/>
+
+      <!-- OauthService ↔ Google -->
+      <path d="M 250,559 L 185,408"
+            stroke="#f97316" stroke-width="1.8" fill="none"
+            marker-end="url(#m-orange)"
+            marker-start="url(#m-orange)"/>
+
+      <text x="205" y="445" fill="#fb923c" font-size="10" text-anchor="middle" transform="rotate(-78,205,445)">OAuth 검증 / 토큰 발급</text>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 3: DB 플로우 (보라색)
+        JPA → RDS MySQL
+        JPA: left=250+264=514(right edge), top=700+높이/2≈730
+        RDS: left=1154, top=70+높이/2≈115
+        경유: x=1130 아래쪽에서 꺾어 올라감
+        ────────────────────────────────────────────────────────
+      -->
+      <path d="M 514,730 C 840,730 840,115 1154,115"
+            stroke="#a855f7" stroke-width="2" fill="none"
+            marker-end="url(#m-purple)"/>
+      <text x="835" y="408" fill="#c084fc" font-size="10" text-anchor="middle" transform="rotate(-90,835,408)">JPA / Hibernate → RDS</text>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 4: S3 Presigned URL 플로우 (청록색)
+        Global Layer(S3 PresignedURL) → S3 aeio-photo2
+        iOS → S3 직접 PUT (점선)
+        Global: left=250+264=514(right), top=360+50≈410
+        S3-photo: left=1154, top=286+높이/2≈340
+        ────────────────────────────────────────────────────────
+      -->
+      <!-- Global → S3 photo (Presigned URL 발급) -->
+      <path d="M 514,400 C 780,400 780,340 1154,340"
+            stroke="#14b8a6" stroke-width="1.8" fill="none"
+            marker-end="url(#m-teal)"/>
+      <text x="836" y="370" fill="#2dd4bf" font-size="10" text-anchor="middle">Presigned URL 발급</text>
+
+      <!-- iOS → S3 photo 직접 PUT (상단 우회 경로, 점선) -->
+      <path d="M 95,80 L 95,32 L 1249,32 L 1249,286"
+            stroke="#14b8a6" stroke-width="1.5" fill="none"
+            stroke-dasharray="7,4"
+            marker-end="url(#m-teal)"/>
+      <text x="670" y="24" fill="#2dd4bf" font-size="10" text-anchor="middle">iOS → S3 직접 PUT (Presigned URL)</text>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 5: 모니터링 플로우 (노란색, 점선)
+        Prometheus → Actuator (scrape)
+        MySQL Exporter → RDS
+        Grafana → Prometheus (쿼리)
+        ────────────────────────────────────────────────────────
+      -->
+      <!-- Prometheus → Actuator
+           Prometheus: left=876, top=88+높이/2≈115 → left edge 876
+           Actuator:   left=250+264=514(right), top=870+35≈905
+      -->
+      <path d="M 876,115 C 700,115 700,905 514,905"
+            stroke="#eab308" stroke-width="1.5" fill="none"
+            stroke-dasharray="6,3"
+            marker-end="url(#m-yellow)"/>
+      <text x="688" y="520" fill="#fbbf24" font-size="10" text-anchor="middle" transform="rotate(-90,688,520)">scrape /actuator/prometheus</text>
+
+      <!-- Grafana → Prometheus (수직 양방향) -->
+      <path d="M 986,235 L 986,152"
+            stroke="#eab308" stroke-width="1.5" fill="none"
+            stroke-dasharray="5,3"
+            marker-end="url(#m-yellow)"
+            marker-start="url(#m-yellow)"/>
+      <text x="1005" y="197" fill="#fbbf24" font-size="10">쿼리</text>
+
+      <!-- MySQL Exporter → RDS
+           MySQLExporter: left=876+220=1096(right), top=395+35≈430
+           RDS right: left=1154+398=1552, top=70+55≈125
+           경유: x=1130 → up
+      -->
+      <path d="M 1096,430 C 1128,430 1128,140 1154,140"
+            stroke="#eab308" stroke-width="1.5" fill="none"
+            stroke-dasharray="6,3"
+            marker-end="url(#m-yellow)"/>
+      <text x="1140" y="290" fill="#fbbf24" font-size="10" text-anchor="middle" transform="rotate(-90,1140,290)">RDS 메트릭 수집</text>
+
+      <!--
+        ────────────────────────────────────────────────────────
+        플로우 6: CI/CD 플로우 (회색, 점선)
+        GitHub Actions → S3 cicd-bucket2 (JAR 업로드)
+        GitHub Actions → CodeDeploy (배포 트리거)
+        CodeDeploy → EC2 (stop.sh → start.sh)
+        ────────────────────────────────────────────────────────
+      -->
+      <!-- GitHub → S3 cicd (우측 아래 경유)
+           GitHub: left=22+146=168(right), top=530+40≈570
+           S3-cicd: left=1358, top=286+35≈321
+           경유: 아래 y=640 → 우측으로 → 위로
+      -->
+      <path d="M 168,570 L 168,660 L 1453,660 L 1453,376"
+            stroke="#9ca3af" stroke-width="1.5" fill="none"
+            stroke-dasharray="7,4"
+            marker-end="url(#m-gray)"/>
+      <text x="810" y="673" fill="#9ca3af" font-size="10" text-anchor="middle">JAR 업로드 → S3</text>
+
+      <!-- GitHub → CodeDeploy
+           경유: y=680 → x=1350
+      -->
+      <path d="M 168,580 L 168,690 L 1350,690 L 1350,615"
+            stroke="#9ca3af" stroke-width="1.5" fill="none"
+            stroke-dasharray="7,4"
+            marker-end="url(#m-gray)"/>
+      <text x="760" y="703" fill="#9ca3af" font-size="10" text-anchor="middle">배포 트리거</text>
+
+      <!-- CodeDeploy → EC2 (Spring Boot 재시작)
+           CodeDeploy: left=1154, top=505+30≈535 → left edge 1154
+           EC2 그룹 right: left=218+900=1118
+           Actuator 노드 (표시용): right=250+264=514, top=870+35≈905
+           경유: x=1118 → 아래 y=750 → 좌측 x=514
+      -->
+      <path d="M 1154,535 L 1120,535 L 1120,980 L 514,980 L 514,935"
+            stroke="#9ca3af" stroke-width="1.5" fill="none"
+            stroke-dasharray="7,4"
+            marker-end="url(#m-gray)"/>
+      <text x="817" y="993" fill="#9ca3af" font-size="10" text-anchor="middle">stop.sh → start.sh (EC2 재배포)</text>
+
+    </svg>
+
+  </div><!-- /.diagram-canvas -->
+
+  <!-- 플로우 범례 -->
+  <div class="flow-legend">
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px solid #3b82f6;"></div>
+      인증 플로우 (JWT)
+    </div>
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px solid #f97316;"></div>
+      OAuth 플로우
+    </div>
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px solid #a855f7;"></div>
+      DB 플로우 (JPA)
+    </div>
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px solid #14b8a6;"></div>
+      S3 Presigned URL 플로우
+    </div>
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px dashed #eab308;"></div>
+      모니터링 플로우
+    </div>
+    <div class="fl-item">
+      <div class="fl-line" style="border-top:2px dashed #9ca3af;"></div>
+      CI/CD 플로우
+    </div>
+  </div>
+
+</div><!-- /.page-wrapper -->
+
+<script>
+  (function () {
+    // 노드 hover 시 z-index 올리기
+    document.querySelectorAll('.nd').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { this.style.zIndex = '30'; });
+      el.addEventListener('mouseleave', function () { this.style.zIndex = ''; });
+    });
+  })();
+</script>
+</body>
+</html>

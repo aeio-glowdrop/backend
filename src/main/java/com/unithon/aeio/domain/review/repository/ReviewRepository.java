@@ -20,6 +20,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"memberClass", "memberClass.member"})
     Page<Review> findByMemberClass_Classes_Id(Long classId, Pageable pageable);
 
+    @Query("SELECT AVG(r.rate) FROM Review r WHERE r.memberClass.classes.id = :classId")
+    Double findAverageRateByClassId(@Param("classId") Long classId);
+
     @Query("SELECT COUNT(r) FROM Review r WHERE r.memberClass.member.id = :memberId")
     long countByMemberId(@Param("memberId") Long memberId);
 

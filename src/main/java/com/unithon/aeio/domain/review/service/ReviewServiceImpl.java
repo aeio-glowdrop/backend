@@ -165,6 +165,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public Double getAverageRateByClassId(Long classId) {
+        return reviewRepository.findAverageRateByClassId(classId);
+    }
+
+    @Override
     public ReviewResponse.ReviewInfo getReview(Long reviewId) {
         Review review = findReview(reviewId);
 
