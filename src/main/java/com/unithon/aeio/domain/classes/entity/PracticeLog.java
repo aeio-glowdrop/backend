@@ -36,6 +36,7 @@ public class PracticeLog extends BaseTimeEntity {
     private String expressionlessPhoto; //무표정 사진 URL
     @Column
     private String practicePhoto; //운동 중 사진 URL
+
     @Column
     private String feedBack;
     @Column

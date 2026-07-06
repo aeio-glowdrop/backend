@@ -42,18 +42,21 @@ public class MemberClass extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id")
     private Classes classes;
 
-    @Column(name = "total_count", columnDefinition = "INT DEFAULT 0")
-    @Builder.Default
-    private Integer totalCount = 0;
-
     @OneToMany(mappedBy = "memberClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PracticeLog> practiceLogList = new ArrayList<>();
+
     @OneToMany(mappedBy = "memberClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Review> reviewList = new ArrayList<>();
+
+
+    @Column(name = "total_count", columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
+    private Integer totalCount = 0;
 }

@@ -7,5 +7,4 @@ public enum AgeGroup {
     FORTIES,    // 40대
     FIFTIES,    // 50대
     SIXTIES_PLUS,   // 60대 이상
-    FORTIES_PLUS // 임시
 }
