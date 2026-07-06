@@ -20,11 +20,9 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
         FROM practice_log pl
         JOIN member_class mc ON pl.member_class_id = mc.member_class_id
         WHERE mc.member_id = :memberId
-          AND pl.deleted_at IS NULL
-          AND mc.deleted_at IS NULL
         GROUP BY activity_date
         ORDER BY activity_date DESC
-        """, nativeQuery = true)
+""", nativeQuery = true)
     List<Date> findDistinctActivityDatesDescRaw(@Param("memberId") Long memberId);
 
     // 편의 디폴트 메소드: LocalDate로 변환
@@ -57,11 +55,9 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
         JOIN member_class mc ON pl.member_class_id = mc.member_class_id
         WHERE mc.member_id = :memberId
           AND mc.class_id  = :classId
-          AND pl.deleted_at IS NULL
-          AND mc.deleted_at IS NULL
         GROUP BY activity_date
         ORDER BY activity_date DESC
-        """, nativeQuery = true)
+""", nativeQuery = true)
     List<Date> findDistinctActivityDatesByMemberAndClassRaw(
             @Param("memberId") Long memberId,
             @Param("classId") Long classId);
