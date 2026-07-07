@@ -68,8 +68,8 @@ class PracticeLogServiceTest {
     void createPracticeLog_incrementsTotalCount() {
         // Arrange
         PracticeLogRequest.BasicLog request = PracticeLogRequest.BasicLog.builder()
-                .expressionlessPhoto("https://s3.example.com/photo/before.jpg")
-                .practicePhoto("https://s3.example.com/photo/after.jpg")
+                .beforePhoto("https://s3.example.com/photo/before.jpg")
+                .afterPhoto("https://s3.example.com/photo/after.jpg")
                 .feedBack("좋았어요")
                 .count(10)
                 .build();
@@ -91,8 +91,8 @@ class PracticeLogServiceTest {
     @DisplayName("운동 3회 기록 시 totalCount가 3이 된다")
     void createPracticeLog_thriceThenTotalCountIsThree() {
         PracticeLogRequest.BasicLog request = PracticeLogRequest.BasicLog.builder()
-                .expressionlessPhoto("https://s3.example.com/photo/before.jpg")
-                .practicePhoto("https://s3.example.com/photo/after.jpg")
+                .beforePhoto("https://s3.example.com/photo/before.jpg")
+                .afterPhoto("https://s3.example.com/photo/after.jpg")
                 .feedBack("좋았어요")
                 .count(10)
                 .build();

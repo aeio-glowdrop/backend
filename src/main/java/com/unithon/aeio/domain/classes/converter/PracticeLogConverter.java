@@ -70,8 +70,8 @@ public class PracticeLogConverter {
                 .classType(classes.getClassType() != null ? classes.getClassType().name() : null)
                 .count(log.getCount())
                 .feedback(log.getFeedBack())
-                .expressionlessPhoto(log.getExpressionlessPhoto())
-                .practicePhoto(log.getPracticePhoto())
+                .beforePhoto(log.getBeforePhoto())
+                .afterPhoto(log.getAfterPhoto())
                 .createdAt(log.getCreatedAt())
                 .build();
     }

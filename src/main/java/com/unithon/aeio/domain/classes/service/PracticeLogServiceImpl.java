@@ -150,8 +150,8 @@ public class PracticeLogServiceImpl implements PracticeLogService {
         PracticeLog log = PracticeLog
                 .builder()
                 .memberClass(memberClass)
-                .expressionlessPhoto(request.getExpressionlessPhoto())
-                .practicePhoto(request.getPracticePhoto())
+                .beforePhoto(request.getBeforePhoto())
+                .afterPhoto(request.getAfterPhoto())
                 .feedBack(request.getFeedBack())
                 .count(request.getCount())
                 .build();
