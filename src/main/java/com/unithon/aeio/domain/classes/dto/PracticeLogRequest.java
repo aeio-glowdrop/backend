@@ -27,7 +27,6 @@ public abstract class PracticeLogRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BasicLog {
-        @NotEmpty(message = "무표정 사진url은 필수로 입력해야 합니다.")
         private String beforePhoto;
         private String afterPhoto;
         @Size(max=100, message = "최대 100자까지 입력할 수 있습니다.")
