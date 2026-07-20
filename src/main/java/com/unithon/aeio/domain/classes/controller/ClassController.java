@@ -69,8 +69,7 @@ public class ClassController {
     }
 
     @DeleteMapping("/cancelLike")
-    @Operation(summary = "클래스 좋아요 취소 API",
-            description = "좋아요를 취소합니다.")
+    @Operation(summary = "클래스 좋아요 취소 API", description = "좋아요를 취소합니다.")
     public ResultResponse<ClassResponse.ClassId> cancelLike(@RequestParam("classId") Long classId,
                                                             @LoginMember Member member) {
         return ResultResponse.of(CANCEL_LIKE,
@@ -99,6 +98,14 @@ public class ClassController {
         Page<ClassResponse.LikeClassInfo> likeClassList = classService.getMyLikedClasses(member, pageable);
         return ResultResponse.of(ClassResultCode.LIKE_LIST,
                 classConverter.toPagedLikeList(likeClassList));
+    }
+
+    // 내가 좋아요한 클래스 전체 목록 (페이징 없음)
+    @GetMapping("/likeList")
+    @Operation(summary = "좋아요 누른 클래스 목록 조회 API", description = "내가 좋아요한 클래스 전체 목록을 반환합니다 (페이징 없음)")
+    public ResultResponse<ClassResponse.LikeList> getMyLikedClassList(@LoginMember Member member) {
+        return ResultResponse.of(ClassResultCode.LIKE_LIST,
+                classService.getMyLikedClassList(member));
     }
 
     // 클래스 삭제

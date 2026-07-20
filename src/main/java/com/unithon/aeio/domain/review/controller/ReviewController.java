@@ -75,6 +75,21 @@ public class ReviewController {
         return ResultResponse.of(GET_MY_REVIEWS, reviewService.getMyReviews(member));
     }
 
+    @GetMapping("/my/paged")
+    @Operation(summary = "내가 작성한 리뷰 목록 조회(페이징) API", description = "로그인 사용자가 작성한 리뷰를 최신순으로 페이징 조회합니다.")
+    @Parameters({
+            @Parameter(name = "page", description = "0부터 시작"),
+            @Parameter(name = "size", description = "페이지 크기")
+    })
+    public ResultResponse<ReviewResponse.PagedMyReviewList> getMyReviewsPaged(
+            @LoginMember Member member,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            @Parameter(hidden = true) Pageable pageable
+    ) {
+        Page<ReviewResponse.ReviewInfo> page = reviewService.getMyReviewPage(member, pageable);
+        return ResultResponse.of(GET_MY_REVIEWS, reviewConverter.toPagedMyReviewList(page));
+    }
+
     @GetMapping("/{classId}/reviews")
     @Operation(summary = "클래스별 리뷰 목록 조회 API", description = "특정 클래스의 리뷰를 최신순 페이징 + 평균 별점과 함께 조회합니다(인증 불필요)")
     @Parameters({

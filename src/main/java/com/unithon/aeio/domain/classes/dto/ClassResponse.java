@@ -90,4 +90,14 @@ public abstract class ClassResponse {
         private boolean isFirst; // 첫 페이지 여부
         private boolean isLast; // 마지막 페이지 여부
     }
+
+    //좋아요한 리스트 전체 조회 (페이징 없음)
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeList {
+        private List<LikeClassInfo> likeClassList;
+        private int count;
+    }
 }

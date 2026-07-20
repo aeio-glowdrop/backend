@@ -13,6 +13,7 @@ public interface ClassService {
     ClassResponse.ClassId cancelLike(Long classId, Member member);
     ClassResponse.SubsList getMySubsList(Member member);
     Page<ClassResponse.LikeClassInfo> getMyLikedClasses(Member member, Pageable pageable);
+    ClassResponse.LikeList getMyLikedClassList(Member member);
     ClassResponse.MemberClassId unsubsClass(Long classId, Member member);
     ClassResponse.ClassId deleteClass(Long classId);
     ClassResponse.ClassInfo getClassInfo(Long classId);

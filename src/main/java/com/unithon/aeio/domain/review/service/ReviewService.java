@@ -15,4 +15,5 @@ public interface ReviewService {
     Double getAverageRateByClassId(Long classId);
     ReviewResponse.ReviewInfo getReview(Long reviewId);
     List<ReviewResponse.ReviewInfo> getMyReviews(Member member);
+    Page<ReviewResponse.ReviewInfo> getMyReviewPage(Member member, Pageable pageable);
 }

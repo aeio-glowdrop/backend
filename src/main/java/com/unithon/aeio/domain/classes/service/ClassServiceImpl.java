@@ -166,6 +166,24 @@ public class ClassServiceImpl implements ClassService {
         });
     }
 
+    @Override
+    public ClassResponse.LikeList getMyLikedClassList(Member member) {
+        List<ClassLike> likedClasses = classLikeRepository.findLikedClassesByMemberId(member.getId());
+        List<ClassResponse.LikeClassInfo> items = likedClasses
+                .stream()
+                .map(cl -> {
+                    Classes c = cl.getClasses();
+                    return ClassResponse.LikeClassInfo.builder()
+                            .classId(c.getId())
+                            .className(c.getClassName())
+                            .thumbnailUrl(toSignedThumbnailUrl(c.getThumbnailUrl()))
+                            .subscribedAt(cl.getCreatedAt())
+                            .build();
+                })
+                .toList();
+        return classConverter.toLikeList(items);
+    }
+
     private String toSignedThumbnailUrl(String thumbnailUrl) {
         if (thumbnailUrl == null || thumbnailUrl.isBlank()) return null;
         return practiceLogService.generateGetPresignedUrlFromPhotoUrl(thumbnailUrl);

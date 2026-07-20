@@ -241,6 +241,45 @@ public class ReviewServiceImpl implements ReviewService {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse.ReviewInfo> getMyReviewPage(Member member, Pageable pageable) {
+        Page<Review> page = reviewRepository.findByMemberClass_Member_Id(member.getId(), pageable);
+
+        List<Long> reviewIds = page.getContent().stream()
+                .map(Review::getId)
+                .toList();
+
+        Map<Long, List<String>> photoMap = reviewIds.isEmpty()
+                ? Map.of()
+                : reviewPhotoRepository.findByReview_IdIn(reviewIds).stream()
+                .collect(Collectors.groupingBy(
+                        rp -> rp.getReview().getId(),
+                        Collectors.mapping(ReviewPhoto::getPhotoUrl, Collectors.toList())
+                ));
+
+        return page.map(review -> {
+            List<String> signedPhotoUrls = photoMap.getOrDefault(review.getId(), List.of())
+                    .stream()
+                    .map(practiceLogService::generateGetPresignedUrlFromPhotoUrl)
+                    .toList();
+            var mc = review.getMemberClass();
+            return ReviewResponse.ReviewInfo.builder()
+                    .reviewId(review.getId())
+                    .rate(review.getRate())
+                    .text(review.getText())
+                    .photoUrls(signedPhotoUrls)
+                    .createdAt(review.getCreatedAt())
+                    .writerMemberId(member.getId())
+                    .writerNickname(member.getNickname())
+                    .writerProfileImage(toSignedProfileUrl(member.getProfileURL()))
+                    .reviewTotalCount(review.getReviewTotalCount())
+                    .reviewStreakCount(review.getReviewStreakCount())
+                    .classId(mc.getClasses().getId())
+                    .build();
+        });
+    }
+
     private String toSignedProfileUrl(String profileUrl) {
         if (profileUrl == null || profileUrl.isBlank()) return null;
         return practiceLogService.generateGetPresignedUrlFromPhotoUrl(profileUrl);

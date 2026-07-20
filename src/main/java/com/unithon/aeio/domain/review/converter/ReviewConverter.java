@@ -33,4 +33,14 @@ public class ReviewConverter {
                 .build();
     }
 
+    public ReviewResponse.PagedMyReviewList toPagedMyReviewList(Page<ReviewResponse.ReviewInfo> page) {
+        return ReviewResponse.PagedMyReviewList.builder()
+                .reviews(page.getContent())
+                .page(page.getNumber())
+                .totalElements(page.getTotalElements())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .build();
+    }
+
 }

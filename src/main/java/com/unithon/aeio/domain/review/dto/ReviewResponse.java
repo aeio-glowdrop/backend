@@ -44,6 +44,18 @@ public abstract class ReviewResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class PagedMyReviewList {
+        private List<ReviewInfo> reviews;
+        private int page;
+        private long totalElements;
+        private boolean isFirst;
+        private boolean isLast;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ReviewInfo {
         private Long reviewId;
         private Double rate;

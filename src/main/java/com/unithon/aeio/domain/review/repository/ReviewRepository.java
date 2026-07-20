@@ -32,4 +32,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      */
     @EntityGraph(attributePaths = {"memberClass", "memberClass.classes"})
     List<Review> findByMemberClass_Member_Id(Long memberId);
+
+    /**
+     * 멤버 ID로 내 리뷰 목록 페이징 조회.
+     * Review -> MemberClass -> Classes 미리 로딩
+     */
+    @EntityGraph(attributePaths = {"memberClass", "memberClass.classes"})
+    Page<Review> findByMemberClass_Member_Id(Long memberId, Pageable pageable);
 }

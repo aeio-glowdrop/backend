@@ -89,4 +89,11 @@ public class ClassConverter {
                 .isLast(page.isLast())
                 .build();
     }
+
+    public ClassResponse.LikeList toLikeList(List<ClassResponse.LikeClassInfo> items) {
+        return ClassResponse.LikeList.builder()
+                .likeClassList(items)
+                .count(items.size())
+                .build();
+    }
 }
