@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +38,14 @@ public class ClassController {
     private final ClassConverter classConverter;
 
     @PostMapping
-    @Operation(summary = "클래스 생성 API", description = "새로운 클래스를 생성하는 API입니다.")
+    @Operation(summary = "클래스 생성 API", description = "새로운 운동 클래스를 생성합니다. (관리용, 인증 불필요)")
     public ResultResponse<ClassResponse.ClassId> createClass(@RequestBody @Valid ClassRequest.ClassInfo request) {
         return ResultResponse.of(ClassResultCode.CREATE_CLASS,
                 classService.createClass(request));
     }
 
     @PostMapping("/subs")
-    @Operation(summary = "클래스 구독 API", description = "사용자가 클래스를 구독하는 API입니다.")
+    @Operation(summary = "클래스 구독 API", description = "특정 클래스를 구독합니다.")
     public ResultResponse<ClassResponse.MemberClassId> subsClass(@RequestParam("classId") Long classId,
                                                                 @LoginMember Member member) {
         return ResultResponse.of(ClassResultCode.SUBSCRIBE_CLASS,
@@ -54,7 +53,7 @@ public class ClassController {
     }
 
     @DeleteMapping("/subs")
-    @Operation(summary = "클래스 구독 취소 API", description = "사용자가 특정 클래스를 구독 취소합니다.")
+    @Operation(summary = "클래스 구독 취소 API", description = "구독을 취소합니다 (hard delete)")
     public ResultResponse<ClassResponse.MemberClassId> unSubsClass(@RequestParam("classId") Long classId,
                                                                    @LoginMember Member member) {
         return ResultResponse.of(ClassResultCode.UNSUBSCRIBE_CLASS,
@@ -62,7 +61,7 @@ public class ClassController {
     }
 
     @PostMapping("/like")
-    @Operation(summary = "클래스 좋아요 API", description = "사용자가 클래스를 좋아요하는 API입니다.")
+    @Operation(summary = "클래스 좋아요 API", description = "클래스에 좋아요를 누릅니다.")
     public ResultResponse<ClassResponse.LikeInfo> likeClass(@RequestParam("classId") Long classId,
                                                             @LoginMember Member member) {
         return ResultResponse.of(ClassResultCode.LIKE_CLASS,
@@ -71,7 +70,7 @@ public class ClassController {
 
     @DeleteMapping("/cancelLike")
     @Operation(summary = "클래스 좋아요 취소 API",
-            description = "로그인한 사용자가 특정 클래스에 대해 좋아요를 취소합니다. (hard delete)")
+            description = "좋아요를 취소합니다.")
     public ResultResponse<ClassResponse.ClassId> cancelLike(@RequestParam("classId") Long classId,
                                                             @LoginMember Member member) {
         return ResultResponse.of(CANCEL_LIKE,
@@ -79,7 +78,7 @@ public class ClassController {
     }
 
     @GetMapping("/subsList")
-    @Operation(summary = "내 구독 클래스 목록 조회 API", description = "현재 로그인 사용자가 구독 중인 클래스 목록을 반환합니다.")
+    @Operation(summary = "구독중인 클래스 목록 조회 API", description = "로그인 사용자가 구독 중인 전체 클래스 목록을 반환합니다 (페이징 없음)")
     public ResultResponse<ClassResponse.SubsList> mySubs(@LoginMember Member member) {
         return ResultResponse.of(ClassResultCode.GET_MY_SUBList,
                 classService.getMySubsList(member));
@@ -87,24 +86,24 @@ public class ClassController {
 
     // 내가 좋아요한 클래스 최신순 페이징
     @GetMapping("/likes/me")
-    @Operation(summary = "내가 좋아요한 클래스 목록 조회", description = "본인이 좋아요한 클래스를 최신순으로 페이징 조회합니다.")
+    @Operation(summary = "좋아요 누른 클래스 목록 조회 API", description = "내가 좋아요한 클래스 목록을 조회합니다.")
     @Parameters({
             @Parameter(name = "page", description = "0부터 시작하는 페이지 인덱스"),
             @Parameter(name = "size", description = "페이지 크기")
     })
     public ResultResponse<ClassResponse.PagedLikeList> getMyLikedClasses(
             @LoginMember Member member,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 10)
             @Parameter(hidden = true) Pageable pageable
     ) {
-        Page<ClassResponse.ClassInfo> likeClassList = classService.getMyLikedClasses(member, pageable);
+        Page<ClassResponse.LikeClassInfo> likeClassList = classService.getMyLikedClasses(member, pageable);
         return ResultResponse.of(ClassResultCode.LIKE_LIST,
                 classConverter.toPagedLikeList(likeClassList));
     }
 
     // 클래스 삭제
     @DeleteMapping("/{classId}")
-    @Operation(summary = "클래스 삭제 API", description = "클래스를 soft delete 처리합니다.")
+    @Operation(summary = "클래스 삭제 API", description = "클래스를 삭제합니다(인증 불필요, 관리용)")
     public ResultResponse<ClassResponse.ClassId> deleteClass(@PathVariable Long classId) {
         return ResultResponse.of(ClassResultCode.DELETE_CLASS,
                 classService.deleteClass(classId));
@@ -112,14 +111,14 @@ public class ClassController {
 
     // 클래스 정보 반환 API
     @GetMapping("/{classId}/info")
-    @Operation(summary = "클래스 정보 반환 API", description = "클래스를 구독하는 인원수를 반환하는 API입니다.")
+    @Operation(summary = "클래스 상세 정보 조회 API", description = "클래스 상세 정보를 조회합니다(로그인 없이 뷰 가능, 인증 불필요)")
     public ResultResponse<ClassResponse.ClassInfo> getClassInfo(@PathVariable Long classId) {
         return ResultResponse.of(ClassResultCode.GET_CLASS_INFO,
                 classService.getClassInfo(classId));
     }
 
     @GetMapping("/linktree")
-    @Operation(summary = "링크트리 URL 조회 API", description = "서비스 링크트리 URL을 반환하는 API입니다.")
+    @Operation(summary = "링크트리 URL 조회 API", description = "서비스 SNS 링크트리 URL을 반환합니다(인증 불필요)")
     public ResultResponse<String> getLinktreeUrl() {
         return ResultResponse.of(ClassResultCode.GET_LINKTREE_URL, "https://linktr.ee/glowdrop.ai");
     }

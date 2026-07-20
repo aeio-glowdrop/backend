@@ -24,7 +24,7 @@ public class ReviewConverter {
     public ReviewResponse.PagedReviewList toPagedReviewList(Long classId, Double averageRate, Page<ReviewResponse.ReviewInfo> page) {
         return ReviewResponse.PagedReviewList.builder()
                 .classId(classId)
-                .averageRate(averageRate != null ? Math.round(averageRate * 10.0) / 10.0 : null)
+                .averageRate(averageRate != null ? Math.round(averageRate * 10.0) / 10.0 : 0.0)
                 .reviews(page.getContent())
                 .page(page.getNumber())
                 .totalElements(page.getTotalElements())

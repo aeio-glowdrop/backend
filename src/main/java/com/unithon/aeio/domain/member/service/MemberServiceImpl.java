@@ -61,7 +61,11 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponse.MemberId createMember(MemberRequest.MemberInfo request, Member member) {
         // 프로필 업데이트
         member.setNickname(request.getNickName());
-        member.setProfileURL(request.getProfileURL());
+        String profileURL = request.getProfileURL();
+        if (profileURL != null && !profileURL.isBlank()) {
+            validateS3Url(profileURL.trim());
+        }
+        member.setProfileURL(profileURL);
         // 성별 업데이트
         member.setGender(request.getGender());
         // 연령대 업데이트
@@ -153,8 +157,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberResponse.MemberId updateMember(MemberRequest.UpdateMemberInfo request, Member member) {
 
-        // 닉네임
-        if (request.getNickName() != null) {
+        // 닉네임 (null이면 수정 안 함)
+        if (request.getNickName() != null && !request.getNickName().isBlank()) {
             String nick = request.getNickName().trim();
             member.setNickname(nick);
         }

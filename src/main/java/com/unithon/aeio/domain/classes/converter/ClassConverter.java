@@ -68,7 +68,7 @@ public class ClassConverter {
                 .focus3(classes.getFocus3())
                 .time(classes.getTime())
                 .subNum(subNum)
-                .subscribedAt(classes.getCreatedAt()) // 구독 시각
+                .createdAt(classes.getCreatedAt()) // 클래스 생성 시각
                 .build();
     }
 
@@ -80,7 +80,7 @@ public class ClassConverter {
                 .build();
     }
 
-    public ClassResponse.PagedLikeList toPagedLikeList(Page<ClassResponse.ClassInfo> page) {
+    public ClassResponse.PagedLikeList toPagedLikeList(Page<ClassResponse.LikeClassInfo> page) {
         return ClassResponse.PagedLikeList.builder()
                 .likeClassList(page.getContent())
                 .page(page.getNumber())

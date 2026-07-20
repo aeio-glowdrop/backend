@@ -43,7 +43,7 @@ public class ReviewController {
     private final ReviewConverter reviewConverter;
 
     @PostMapping
-    @Operation(summary = "리뷰 작성 API", description = "새로운 리뷰를 생성하는 API입니다.")
+    @Operation(summary = "리뷰 작성 API", description = "클래스에 대한 별점/텍스트/사진 리뷰를 작성합니다. 작성 시점의 누적운동횟수/스트릭이 함께 저장됩니다.")
     public ResultResponse<ReviewResponse.ReviewId> createReview(@RequestBody @Valid ReviewRequest.ReviewInfo request,
                                                                 @RequestParam("classId") Long classId,
                                                                 @LoginMember Member member) {
@@ -52,7 +52,7 @@ public class ReviewController {
     }
 
     @DeleteMapping
-    @Operation(summary = "리뷰 삭제 API", description = "리뷰 및 연결된 리뷰포토를 소프트 삭제합니다.")
+    @Operation(summary = "리뷰 삭제 API", description = "본인이 작성한 리뷰를 삭제합니다.")
     public ResultResponse<ReviewResponse.DeleteReview> deleteReview(@RequestParam("reviewId") Long reviewId,
                                                                     @LoginMember Member member) {
         return ResultResponse.of(DELETE_REVIEW,
@@ -60,7 +60,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{reviewId}")
-    @Operation(summary = "리뷰 단건 조회 API", description = "reviewId에 해당하는 리뷰 정보를 조회합니다.")
+    @Operation(summary = "리뷰 상세 조회 API", description = "리뷰 상세 정보를 조회합니다(인증 불필요, 비로그인도 조회 가능)")
     @Parameters({
             @Parameter(name = "reviewId", description = "조회할 리뷰 ID")
     })
@@ -70,13 +70,13 @@ public class ReviewController {
     }
 
     @GetMapping("/my")
-    @Operation(summary = "내 후기 목록 조회 API", description = "로그인한 사용자가 작성한 모든 후기 목록을 반환합니다.")
+    @Operation(summary = "내가 작성한 리뷰 목록 조회 API", description = "로그인 사용자가 작성한 모든 리뷰를 전체 조회합니다. (페이징 없음)")
     public ResultResponse<List<ReviewResponse.ReviewInfo>> getMyReviews(@LoginMember Member member) {
         return ResultResponse.of(GET_MY_REVIEWS, reviewService.getMyReviews(member));
     }
 
     @GetMapping("/{classId}/reviews")
-    @Operation(summary = "클래스 리뷰 목록 조회", description = "특정 클래스의 리뷰를 최신순 페이징으로 조회합니다.")
+    @Operation(summary = "클래스별 리뷰 목록 조회 API", description = "특정 클래스의 리뷰를 최신순 페이징 + 평균 별점과 함께 조회합니다(인증 불필요)")
     @Parameters({
             @Parameter(name = "page", description = "0부터 시작"),
             @Parameter(name = "size", description = "페이지 크기")

@@ -41,7 +41,7 @@ public class PracticeLogController {
     private final PracticeLogConverter practiceLogConverter;
 
     @PostMapping("/preSignedUrl")
-    @Operation(summary = "Presigned URL 요청 API", description = "Presigned URL을 요청하는 API입니다.")
+    @Operation(summary = "PresignedURL 리스트 발급 API", description = "S3 직접 업로드를 위한 PUT presigned URL 목록을 발급합니다(인증 불필요)")
     public ResultResponse<PracticeLogResponse.PreSignedUrlList> getPreSignedUrlList(@Valid @RequestBody PracticeLogRequest.PreSignedUrlRequest request) {
         long startTime = System.currentTimeMillis();
         List<PracticeLogResponse.PreSignedUrl> preSignedUrlList = practiceLogService.getPreSignedUrlList(request);
@@ -51,7 +51,7 @@ public class PracticeLogController {
     }
 
     @PostMapping("/basic")
-    @Operation(summary = "운동정보 저장 API", description = "운동정보를 저장하는 API 입니다.")
+    @Operation(summary = "운동 정보 저장 API", description = "운동 전/후 사진과 피드백을 저장하고, 구독 클래스의 운동 횟수/누적시간을 갱신합니다.")
     public ResultResponse<PracticeLogResponse.PracticeLogId> uploadPhotos(@RequestParam("classId") Long classId,
                                                                           @LoginMember Member member,
                                                                           @RequestBody @Valid PracticeLogRequest.BasicLog request) {
@@ -60,7 +60,7 @@ public class PracticeLogController {
     }
 
     @GetMapping("/by-date")
-    @Operation(summary = "특정 날짜의 운동 목록 조회 API", description = "특정 날짜의 운동 목록을 최신순으로 반환합니다.")
+    @Operation(summary = "특정 날짜의 내 운동 목록 조회 API", description = "특정 날짜의 운동 기록을 최신순으로 조회합니다.")
     public ResultResponse<List<PracticeLogResponse.PracticeItem>> getPracticeListByDate(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @LoginMember Member member) {
@@ -70,7 +70,7 @@ public class PracticeLogController {
     }
 
     @GetMapping("/date-list")
-    @Operation(summary = "특정 멤버의 운동 날짜 조회 API", description = "특정 멤버의 운동 날짜 리스트 반환")
+    @Operation(summary = "내 운동 날짜 리스트 조회 API", description = "캘린더 표시용으로, 내 운동 기록이 있는 날짜 목록을 반환합니다.")
     public ResultResponse<List<PracticeLogResponse.PracticeDate>> getPracticeDates(@LoginMember Member member) {
         return ResultResponse.of(GET_PRACTICE_LIST,
                 practiceLogService.getPracticeDateList(member)
@@ -78,7 +78,7 @@ public class PracticeLogController {
     }
 
     @GetMapping("/total-count")
-    @Operation(summary = "운동 총 횟수 조회 API", description = "유저가 특정 클래스에서 수행한 운동 총 횟수를 반환합니다.")
+    @Operation(summary = "클래스별 내가 운동한 총 횟수 조회 API", description = "유저가 특정 클래스에서 수행한 누적 운동 횟수를 조회합니다.")
     public ResultResponse<PracticeLogResponse.TotalCount> getTotalCount(
             @RequestParam("classId") Long classId,
             @LoginMember Member member) {
@@ -87,7 +87,7 @@ public class PracticeLogController {
     }
 
     @GetMapping("/streak")
-    @Operation(summary = "클래스별 연속 운동 일수 조회 API", description = "오늘 기준으로 특정 클래스를 연속으로 며칠 수행했는지 반환합니다. 오늘 기록이 없으면 0입니다.")
+    @Operation(summary = "클래스별 내 연속 운동일수 조회 API", description = "특정 클래스를 오늘 기준 며칠 연속 수행했는지 조회합니다.")
     public ResultResponse<PracticeLogResponse.ClassStreak> getClassStreak(
             @RequestParam("classId") Long classId,
             @LoginMember Member member) {

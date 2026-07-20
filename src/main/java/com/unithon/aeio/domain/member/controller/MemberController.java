@@ -41,7 +41,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    @Operation(summary = "회원정보 저장 API", description = "새로운 회원정보를 저장하는 API입니다.")
+    @Operation(summary = "회원정보 저장 API (최초 온보딩)", description = "최초 가입 시 닉네임/성별/연령대/고민부위 등 프로필을 저장합니다.")
     public ResultResponse<MemberResponse.MemberId> createMember(@RequestBody @Valid MemberRequest.MemberInfo request,
                                                                 @LoginMember Member member) {
         return ResultResponse.of(MemberResultCode.CREATE_MEMBER,
@@ -49,7 +49,7 @@ public class MemberController {
     }
 
     @PatchMapping
-    @Operation(summary = "회원정보 수정 API", description = "회원 닉네임/성별/고민부위를 부분 수정합니다.")
+    @Operation(summary = "회원정보 부분 수정 API", description = "닉네임/성별/고민부위를 부분 수정합니다.")
     public ResultResponse<MemberResponse.MemberId> updateMember(
             @RequestBody @Valid MemberRequest.UpdateMemberInfo request,
             @LoginMember Member member
@@ -59,36 +59,36 @@ public class MemberController {
     }
 
     @GetMapping("/information")
-    @Operation(summary = "사용자 정보 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
+    @Operation(summary = "회원정보 조회 API", description = "로그인 사용자의 상세 프로필(닉네임/프로필사진/이메일/고민부위)을 조회합니다.")
     public ResultResponse<MemberResponse.MemberInfo> getMemberInfo(@LoginMember Member member) {
         return ResultResponse.of(MemberResultCode.GET_USER_INFO,
                 memberService.getMemberInfo(member));
     }
 
     @GetMapping("/nickName")
-    @Operation(summary = "사용자 닉네임 조회 API", description = "로그인한 사용자의 닉네임을 반환하는 API입니다.")
+    @Operation(summary = "회원 닉네임 조회 API", description = "닉네임만 간단 조회합니다.")
     public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member) {
-        return ResultResponse.of(MemberResultCode.GET_USER_INFO,
+        return ResultResponse.of(MemberResultCode.GET_NICKNAME,
                 memberService.getNickName(member));
     }
 
     @GetMapping("/streak")
-    @Operation(summary = "현재 스트릭 조회", description = "오늘을 기준으로 연속 운동 일수를 반환합니다.")
+    @Operation(summary = "연속 운동일수(스트릭) 조회 API", description = "오늘 기준 연속 운동일수를 계산합니다(전체 클래스 통합 기준)")
     public ResultResponse<MemberResponse.Streak> getStreak(@LoginMember Member member) {
         return ResultResponse.of(GET_CURRENT_STREAK,
                 memberService.getStreak(member));
     }
 
     // 멤버 삭제
-    @DeleteMapping("")
-    @Operation(summary = "멤버 삭제 API", description = "멤버를 delete 처리합니다.")
+    @DeleteMapping
+    @Operation(summary = "회원 삭제 API", description = "회원 탈퇴 처리를 합니다.")
     public ResultResponse<MemberResponse.MemberId> deleteMember(@LoginMember Member member) {
         return ResultResponse.of(DELETE_MEMBER,
                 memberService.deleteMember(member));
     }
 
     @PostMapping("/agreements")
-    @Operation(summary = "이용정보 약관 동의 API", description = "이용정보 약관에 동의하는 API입니다.")
+    @Operation(summary = "이용약관 동의 API", description = "이용약관/개인정보처리방침/마케팅 수신 등 동의를 저장합니다.")
     public ResultResponse<OauthResponse.CheckMemberRegistration> saveAgreements(@LoginMember Member member,
                                                                                 @Valid @RequestBody OauthRequest.AgreementRequest request
     ) throws BusinessException {
@@ -101,33 +101,33 @@ public class MemberController {
     }
 
     @PatchMapping("/nickname")
-    @Operation(summary = "사용자 닉네임 수정 API", description = "로그인한 사용자의 닉네임을 수정하는 API입니다.")
+    @Operation(summary = "사용자 닉네임 수정 API", description = "닉네임만 단독 수정합니다.")
     public ResultResponse<MemberResponse.NickName> getNickName(@LoginMember Member member, @RequestParam String nickname) {
         return ResultResponse.of(MemberResultCode.UPDATE_NICKNAME,
                 memberService.updateNickName(member, nickname));
     }
 
     @PostMapping("/profileImage")
-    @Operation(summary = "프로필 사진 업로드/수정 API", description = "로그인한 사용자의 프로필 사진을 업로드/수정하는 API입니다.")
+    @Operation(summary = "프로필 사진 업로드/수정 API", description = "S3에 미리 업로드된 사진 URL을 회원 프로필에 반영합니다.")
     public ResultResponse<MemberResponse.MemberId> updateProfileImage(@LoginMember Member member, @RequestBody MemberRequest.UpdateProfile request) {
         return ResultResponse.of(UPDATE_PROFILE,
                 memberService.updateProfile(member, request.getProfileImageUrl()));
     }
 
     @GetMapping("/mypage")
-    @Operation(summary = "마이페이지 조회 API", description = "로그인한 사용자의 마이페이지 정보를 반환합니다.")
+    @Operation(summary = "마이페이지 조회 API", description = "마이페이지에 필요한 통계(운동횟수/시간/리뷰수/구독수/좋아요수)를 종합 조회합니다.")
     public ResultResponse<MemberResponse.MyPage> getMyPage(@LoginMember Member member) {
         return ResultResponse.of(GET_MYPAGE, memberService.getMyPage(member));
     }
 
     @GetMapping("/worryList")
-    @Operation(summary = "고민 부위 조회 API", description = "로그인한 사용자의 고민 부위 목록을 반환합니다.")
+    @Operation(summary = "고민 부위 조회 API", description = "사용자가 선택한 고민 부위를 조회합니다.")
     public ResultResponse<MemberResponse.WorryList> getWorryList(@LoginMember Member member) {
         return ResultResponse.of(GET_WORRY_LIST, memberService.getWorryList(member));
     }
 
     @PatchMapping("/worryList")
-    @Operation(summary = "고민 부위 수정 API", description = "로그인한 사용자의 고민 부위 목록을 수정합니다.")
+    @Operation(summary = "고민 부위 수정 API", description = "고민 부위 목록을 전체 교체합니다.")
     public ResultResponse<MemberResponse.WorryList> updateWorryList(@LoginMember Member member,
                                                                      @RequestBody @Valid MemberRequest.UpdateWorryList request) {
         return ResultResponse.of(UPDATE_WORRY_LIST, memberService.updateWorryList(member, request));

@@ -76,7 +76,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     // 원본 사진 전체 경로 생성
     private String createPath(String fileName) {
         String fileId = createFileId();
-        return String.format("%s/%s", RAW_PATH_PREFIX, fileId + fileName);
+        return String.format("%s/%s", RAW_PATH_PREFIX, fileId + "_" + fileName);
     }
 
     // 사진 고유 ID 생성

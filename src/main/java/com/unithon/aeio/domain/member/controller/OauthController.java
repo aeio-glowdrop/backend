@@ -33,7 +33,7 @@ public class OauthController {
     private final GoogleOauthService googleOauthService;
 
     @PostMapping("/oauth")
-    @Operation(summary = "카카오 로그인 API", description = "카카오톡을 통해 서비스에 로그인하는 API입니다.")
+    @Operation(summary = "Kakao 로그인 API", description = "카카오 액세스토큰으로 회원을 로그인시키고 서버 액세스토큰을 발급합니다. 리프레시토큰은 응답 쿠키(HttpOnly)로 세팅됩니다.")
     public ResultResponse<OauthResponse.ServerAccessTokenInfo> login(@RequestBody OauthRequest.FrontAccessTokenInfo oauthRequest,
                                                                      HttpServletResponse response) { //HTTP 응답 조작: Refresh Token을 클라이언트의 브라우저 쿠키에 저장할 때 사용
         return ResultResponse.of(LOGIN, oauthService.login(oauthRequest, response));
@@ -41,27 +41,27 @@ public class OauthController {
 
     // 리프레시 토큰으로 액세스토큰 재발급 받는 로직
     @PostMapping("/token/refresh")
-    @Operation(summary = "액세스토큰 재발급 API", description = "리프레시 토큰으로 액세스토큰을 재발급 받는 API입니다.")
+    @Operation(summary = "액세스토큰 재발급 API", description = "쿠키의 refresh_token으로 새 액세스토큰을 발급합니다.")
     public ResultResponse<OauthResponse.RefreshTokenResponse> tokenRefresh(HttpServletRequest request) { //request: 클라이언트가 서버에 보낸 HTTP 요청에 포함된 쿠키를 가져오기 위함
         return ResultResponse.of(REFRESH_TOKEN, oauthService.tokenRefresh(request));
     }
 
     // 특정 authId를 가진 회원의 회원가입 여부 조회
     @PostMapping("/check-registration")
-    @Operation(summary = "회원가입 여부 조회 API", description = "authId를 통해, 해당 정보와 일치하는 회원의 가입 여부를 조회하는 API입니다.")
+    @Operation(summary = "회원가입 여부 조회 API", description = "카카오에서 제공하는 고유 회원번호인 authId를 통해 가입 여부를 조회하는 API 입니다.")
     public ResultResponse<OauthResponse.CheckMemberRegistration> checkSignup(@Valid @RequestBody OauthRequest.LoginRequest request) {
         return ResultResponse.of(CHECK_MEMBER_REGISTRATION, oauthService.checkRegistration(request));
     }
 
     @PostMapping("/redirect/apple")
-    @Operation(summary = "Oauth 애플 로그인 리다이렉트 API", description = "애플 로그인 리다이렉트 API입니다.")
+    @Operation(summary = "Apple 로그인 리다이렉트 API", description = "애플 OAuth authorization code로 토큰을 교환해 로그인시킵니다. 미가입 시 자동 회원가입됩니다.")
     public ResultResponse<OauthResponse.ServerAccessTokenInfo> appleRedirect(@RequestParam("code") String code,
                                                                              HttpServletResponse response) {
         return ResultResponse.of(LOGIN, appleOauthService.loginApple(code, response));
     }
 
     @PostMapping("/oauth/google")
-    @Operation(summary = "Google 로그인 API", description = "Google 액세스 토큰을 통해 서비스에 로그인하는 API입니다.")
+    @Operation(summary = "Google 로그인 API", description = "구글 액세스토큰으로 로그인시킵니다. 미가입 시 자동 회원가입됩니다.")
     public ResultResponse<OauthResponse.ServerAccessTokenInfo> loginGoogle(
             @Valid @RequestBody OauthRequest.FrontAccessTokenInfo oauthRequest,
             HttpServletResponse response) {

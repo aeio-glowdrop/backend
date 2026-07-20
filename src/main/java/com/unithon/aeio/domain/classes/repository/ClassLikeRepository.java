@@ -18,13 +18,13 @@ public interface ClassLikeRepository extends JpaRepository<ClassLike, Long> {
     Optional<ClassLike> findByClassesAndMember(Classes classes, Member member);
 
     @Query("""
-        select c
+        select cl
         from ClassLike cl
-            join cl.classes c
+            join fetch cl.classes c
         where cl.member.id = :memberId
         order by cl.createdAt desc
         """)
-    Page<Classes> findLikedClassesByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+    Page<ClassLike> findLikedClassesByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
     long countByMemberId(Long memberId);
 }

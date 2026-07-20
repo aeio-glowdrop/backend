@@ -13,6 +13,7 @@ import com.unithon.aeio.domain.member.entity.Member;
 import com.unithon.aeio.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,19 +146,24 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Page<ClassResponse.ClassInfo> getMyLikedClasses(Member member, Pageable pageable) {
+    public Page<ClassResponse.LikeClassInfo> getMyLikedClasses(Member member, Pageable pageable) {
+
+        // 정렬은 쿼리에 고정된 좋아요 최신순만 허용 (page/size만 반영, sort 파라미터는 무시)
+        Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         // 좋아요한 클래스 엔티티 페이지 조회 (정렬: 좋아요 최신순)
-        Page<Classes> page = classLikeRepository.findLikedClassesByMemberId(member.getId(), pageable);
+        Page<ClassLike> page = classLikeRepository.findLikedClassesByMemberId(member.getId(), pageOnly);
 
-        // 4) 엔티티 -> DTO 매핑
-        return page.map(c -> ClassResponse.ClassInfo.builder()
-                .classId(c.getId())
-                .className(c.getClassName())
-                .thumbnailUrl(toSignedThumbnailUrl(c.getThumbnailUrl()))
-                .classType(c.getClassType())
-                .teacher(c.getTeacher())
-                .build());
+        // 엔티티 -> DTO 매핑
+        return page.map(cl -> {
+            Classes c = cl.getClasses();
+            return ClassResponse.LikeClassInfo.builder()
+                    .classId(c.getId())
+                    .className(c.getClassName())
+                    .thumbnailUrl(toSignedThumbnailUrl(c.getThumbnailUrl()))
+                    .subscribedAt(cl.getCreatedAt())
+                    .build();
+        });
     }
 
     private String toSignedThumbnailUrl(String thumbnailUrl) {

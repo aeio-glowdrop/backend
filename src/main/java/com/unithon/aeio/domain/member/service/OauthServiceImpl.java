@@ -78,9 +78,6 @@ public class OauthServiceImpl implements OauthService {
     @Override
     public OauthResponse.CheckMemberRegistration checkRegistration(OauthRequest.LoginRequest request) {
         boolean isRegistered = memberRepository.existsByAuthId(request.getAuthId());
-        if (!isRegistered) {
-            throw new BusinessException(MEMBER_NOT_FOUND);
-        }
         return memberConverter.toCheckMemberRegistration(isRegistered);
     }
 

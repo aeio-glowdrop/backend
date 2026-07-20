@@ -1,5 +1,6 @@
 package com.unithon.aeio.domain.classes.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.unithon.aeio.domain.classes.entity.ClassType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,7 @@ public abstract class ClassResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ClassInfo {
         private Long classId;
         private String className;
@@ -51,7 +53,8 @@ public abstract class ClassResponse {
         private String focus3;
         private int time;
         private long subNum; //구독 인원수
-        private LocalDateTime subscribedAt;
+        private LocalDateTime subscribedAt; // 구독 시각 (구독 목록 조회 시에만 사용, 값이 없으면 응답에서 생략됨)
+        private LocalDateTime createdAt; // 클래스 생성 시각 (클래스 상세 조회 시에만 사용, 값이 없으면 응답에서 생략됨)
     }
 
     @Getter
@@ -63,14 +66,25 @@ public abstract class ClassResponse {
         private int count;
     }
 
+    //좋아요한 클래스 목록 조회용 요약 정보
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeClassInfo {
+        private Long classId;
+        private String className;
+        private String thumbnailUrl;
+        private LocalDateTime subscribedAt; // 좋아요 누른 시각
+    }
+
     //좋아요한 리스트 페이징 조회
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PagedLikeList {
-        private Long classId;
-        private List<ClassInfo> likeClassList; //좋아요 누른 클래스 리스트
+        private List<LikeClassInfo> likeClassList; //좋아요 누른 클래스 리스트
         private int page; // 페이지 번호
         private long totalElements; // 해당 조건에 부합하는 요소의 총 개수
         private boolean isFirst; // 첫 페이지 여부
