@@ -21,8 +21,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,4 +59,19 @@ public class MemberClass extends BaseTimeEntity {
     @Column(name = "total_count", columnDefinition = "INT DEFAULT 0")
     @Builder.Default
     private Integer totalCount = 0;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void restore() {
+        this.deletedAt = null;
+    }
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }

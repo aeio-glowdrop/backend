@@ -76,7 +76,7 @@ class PracticeLogServiceTest {
                 .build();
 
         when(classRepository.findById(10L)).thenReturn(Optional.of(classes));
-        when(memberClassRepository.findByMemberIdAndClassesId(1L, 10L)).thenReturn(Optional.of(memberClass));
+        when(memberClassRepository.findByMemberIdAndClassesIdAndDeletedAtIsNull(1L, 10L)).thenReturn(Optional.of(memberClass));
         when(practiceLogRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         int before = memberClass.getTotalCount(); // 0
@@ -99,7 +99,7 @@ class PracticeLogServiceTest {
                 .build();
 
         when(classRepository.findById(10L)).thenReturn(Optional.of(classes));
-        when(memberClassRepository.findByMemberIdAndClassesId(1L, 10L)).thenReturn(Optional.of(memberClass));
+        when(memberClassRepository.findByMemberIdAndClassesIdAndDeletedAtIsNull(1L, 10L)).thenReturn(Optional.of(memberClass));
         when(practiceLogRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         // Act
@@ -116,7 +116,7 @@ class PracticeLogServiceTest {
     void getTotalCount_returnsCurrentCount() {
         // Arrange
         memberClass.setTotalCount(5);
-        when(memberClassRepository.findByMemberIdAndClassesId(1L, 10L)).thenReturn(Optional.of(memberClass));
+        when(memberClassRepository.findByMemberIdAndClassesIdAndDeletedAtIsNull(1L, 10L)).thenReturn(Optional.of(memberClass));
 
         // Act
         PracticeLogResponse.TotalCount result = practiceLogService.getTotalCount(10L, member);

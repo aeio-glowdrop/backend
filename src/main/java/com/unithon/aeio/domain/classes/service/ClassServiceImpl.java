@@ -66,19 +66,29 @@ public class ClassServiceImpl implements ClassService {
         Classes classes = classRepository.findById(classId)
                 .orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 
-        // 이미 구독 여부 확인 (재구독 시 에러 반환)
-        if (memberClassRepository.existsByMemberIdAndClassesId(member.getId(), classId)) {
+        // 과거 구독 이력(soft-delete 포함) 확인
+        MemberClass mc = memberClassRepository.findByMemberIdAndClassesId(member.getId(), classId)
+                .orElse(null);
+
+        if (mc != null && !mc.isDeleted()) {
+            // 이미 활성 구독 중이면 에러 반환
             throw new BusinessException(ALREADY_SUBSCRIBED);
         }
 
+        if (mc != null) {
+            // 예전에 구독 취소했던 row 재활성화 (운동 기록/리뷰 이력 보존)
+            mc.restore();
+            return classConverter.toSubs(mc);
+        }
+
         // 구독 생성
-        MemberClass mc = MemberClass
+        MemberClass newMc = MemberClass
                 .builder()
                 .member(member)
                 .classes(classes)
                 .build();
 
-        MemberClass saved = memberClassRepository.save(mc);
+        MemberClass saved = memberClassRepository.save(newMc);
 
         return classConverter.toSubs(saved);
     }
@@ -88,8 +98,8 @@ public class ClassServiceImpl implements ClassService {
     public ClassResponse.MemberClassId unsubsClass(Long classId, Member member) {
         // 구독 존재 확인 (없으면 에러)
         MemberClass mc = findMemberClass(member.getId(), classId);
-        // 삭제 (hard delete)
-        memberClassRepository.delete(mc);
+        // soft delete: 운동 기록/리뷰는 그대로 보존
+        mc.softDelete();
         // id만 반환
         return classConverter.toSubs(mc);
     }
@@ -137,7 +147,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public ClassResponse.SubsList getMySubsList(Member member) {
-        List<MemberClass> subs = memberClassRepository.findAllByMemberIdOrderByIdDesc(member.getId());
+        List<MemberClass> subs = memberClassRepository.findAllByMemberIdAndDeletedAtIsNullOrderByIdDesc(member.getId());
         List<ClassResponse.ClassInfo> items = subs
                 .stream()
                 .map(mc -> classConverter.toSubsClass(mc, toSignedThumbnailUrl(mc.getClasses().getThumbnailUrl())))
@@ -205,7 +215,7 @@ public class ClassServiceImpl implements ClassService {
         //클래스 조회
         Classes classes = findClass(classId);
         //클래스 구독하는 인원수
-        long subNum = memberClassRepository.countByClassesId(classId);
+        long subNum = memberClassRepository.countByClassesIdAndDeletedAtIsNull(classId);
         return classConverter.toClassInfo(classes, subNum);
     }
 
@@ -215,7 +225,7 @@ public class ClassServiceImpl implements ClassService {
     }
 
     private MemberClass findMemberClass(Long memberId, Long classId) {
-        return memberClassRepository.findByMemberIdAndClassesId(memberId, classId)
+        return memberClassRepository.findByMemberIdAndClassesIdAndDeletedAtIsNull(memberId, classId)
                 .orElseThrow(() -> new BusinessException(MEMBER_CLASS_NOT_FOUND));
     }
 }

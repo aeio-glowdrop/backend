@@ -257,7 +257,7 @@ public class PracticeLogServiceImpl implements PracticeLogService {
 
     @Override
     public MemberClass findMemberClass(long memberId, long classId) {
-        return memberClassRepository.findByMemberIdAndClassesId(memberId, classId)
+        return memberClassRepository.findByMemberIdAndClassesIdAndDeletedAtIsNull(memberId, classId)
                 .orElseThrow(() -> new BusinessException(MEMBER_CLASS_NOT_FOUND));
     }
 }

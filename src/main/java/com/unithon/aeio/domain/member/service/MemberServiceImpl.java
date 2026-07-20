@@ -371,7 +371,7 @@ public class MemberServiceImpl implements MemberService {
         }
 
         int reviewCount = (int) reviewRepository.countByMemberId(member.getId());
-        int subscribedClassCount = (int) memberClassRepository.countByMemberId(member.getId());
+        int subscribedClassCount = (int) memberClassRepository.countByMemberIdAndDeletedAtIsNull(member.getId());
         int likedClassCount = (int) classLikeRepository.countByMemberId(member.getId());
 
         return memberConverter.toMyPage(
