@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_BASIC_LOG;
 import static com.unithon.aeio.global.result.code.ClassResultCode.CREATE_PRESIGNED_URL;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_DATE;
+import static com.unithon.aeio.global.result.code.ClassResultCode.GET_PRACTICE_LIST_BY_MONTH;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_CLASS_STREAK;
 import static com.unithon.aeio.global.result.code.ClassResultCode.GET_TOTAL_COUNT;
 
@@ -74,6 +76,16 @@ public class PracticeLogController {
     public ResultResponse<List<PracticeLogResponse.PracticeDate>> getPracticeDates(@LoginMember Member member) {
         return ResultResponse.of(GET_PRACTICE_LIST,
                 practiceLogService.getPracticeDateList(member)
+        );
+    }
+
+    @GetMapping("/by-month")
+    @Operation(summary = "특정 년-월의 내 운동 날짜 리스트 조회 API", description = "캘린더 표시용으로, 특정 년-월에 내 운동 기록이 있는 날짜 목록을 반환합니다.")
+    public ResultResponse<List<PracticeLogResponse.PracticeDate>> getPracticeDatesByMonth(
+            @RequestParam("yearMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
+            @LoginMember Member member) {
+        return ResultResponse.of(GET_PRACTICE_LIST_BY_MONTH,
+                practiceLogService.getPracticeDateListByMonth(yearMonth, member)
         );
     }
 

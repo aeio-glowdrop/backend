@@ -7,6 +7,7 @@ import com.unithon.aeio.domain.classes.entity.MemberClass;
 import com.unithon.aeio.domain.member.entity.Member;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 public interface PracticeLogService {
@@ -17,6 +18,7 @@ public interface PracticeLogService {
     List<PracticeLogResponse.PracticeItem> getPracticeListByDate(LocalDate date, Member member);
     String generateGetPresignedUrlFromPhotoUrl(String photoUrl);
     List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member);
+    List<PracticeLogResponse.PracticeDate> getPracticeDateListByMonth(YearMonth yearMonth, Member member);
     PracticeLogResponse.TotalCount getTotalCount(Long classId, Member member);
     PracticeLogResponse.ClassStreak getClassStreak(Long classId, Member member);
 }

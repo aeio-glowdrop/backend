@@ -48,6 +48,20 @@ public interface PracticeLogRepository extends JpaRepository<PracticeLog, Long> 
     """)
     List<java.sql.Date> findDistinctPracticeDatesByMember(@Param("member") Member member);
 
+    // 해당 멤버가 특정 년-월에 운동한 "날짜"만 distinct로 조회
+    @Query("""
+        select distinct function('date', p.createdAt)
+        from PracticeLog p
+        where p.memberClass.member = :member
+          and function('year', p.createdAt) = :year
+          and function('month', p.createdAt) = :month
+        order by function('date', p.createdAt) desc
+    """)
+    List<java.sql.Date> findDistinctPracticeDatesByMemberAndYearMonth(
+            @Param("member") Member member,
+            @Param("year") int year,
+            @Param("month") int month);
+
     // 특정 멤버 + 특정 클래스 기준 날짜 distinct 조회 (최신순)
     @Query(value = """
         SELECT DATE(pl.created_at) AS activity_date

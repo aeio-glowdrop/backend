@@ -27,6 +27,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -186,6 +187,20 @@ public class PracticeLogServiceImpl implements PracticeLogService {
     @Override
     public List<PracticeLogResponse.PracticeDate> getPracticeDateList(Member member) {
         List<LocalDate> dates = practiceLogRepository.findDistinctPracticeDatesByMember(member)
+                .stream()
+                .map(java.sql.Date::toLocalDate)
+                .toList();
+
+        return dates.stream()
+                .map(PracticeLogResponse.PracticeDate::from)
+                .toList();
+    }
+
+    // "특정 년-월에 운동한 날짜 리스트" 반환
+    @Override
+    public List<PracticeLogResponse.PracticeDate> getPracticeDateListByMonth(YearMonth yearMonth, Member member) {
+        List<LocalDate> dates = practiceLogRepository
+                .findDistinctPracticeDatesByMemberAndYearMonth(member, yearMonth.getYear(), yearMonth.getMonthValue())
                 .stream()
                 .map(java.sql.Date::toLocalDate)
                 .toList();

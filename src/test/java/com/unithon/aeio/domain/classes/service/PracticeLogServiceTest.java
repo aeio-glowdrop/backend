@@ -19,6 +19,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,6 +125,40 @@ class PracticeLogServiceTest {
         assertThat(result.getTotalCount()).isEqualTo(5);
         assertThat(result.getMemberClassId()).isEqualTo(100L);
         assertThat(result.getClassId()).isEqualTo(10L);
+    }
+
+    // ====== getPracticeDateListByMonth 테스트 ======
+
+    @Test
+    @DisplayName("getPracticeDateListByMonth는 해당 년-월의 운동 날짜 리스트를 최신순으로 반환한다")
+    void getPracticeDateListByMonth_returnsDatesInMonth() {
+        YearMonth yearMonth = YearMonth.of(2026, 7);
+        java.sql.Date d1 = java.sql.Date.valueOf(LocalDate.of(2026, 7, 18));
+        java.sql.Date d2 = java.sql.Date.valueOf(LocalDate.of(2026, 7, 3));
+
+        when(practiceLogRepository.findDistinctPracticeDatesByMemberAndYearMonth(member, 2026, 7))
+                .thenReturn(List.of(d1, d2));
+
+        List<PracticeLogResponse.PracticeDate> result =
+                practiceLogService.getPracticeDateListByMonth(yearMonth, member);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getDate()).isEqualTo(LocalDate.of(2026, 7, 18));
+        assertThat(result.get(1).getDate()).isEqualTo(LocalDate.of(2026, 7, 3));
+    }
+
+    @Test
+    @DisplayName("해당 년-월에 기록이 없으면 빈 리스트를 반환한다")
+    void getPracticeDateListByMonth_noRecords_returnsEmptyList() {
+        YearMonth yearMonth = YearMonth.of(2026, 8);
+
+        when(practiceLogRepository.findDistinctPracticeDatesByMemberAndYearMonth(member, 2026, 8))
+                .thenReturn(List.of());
+
+        List<PracticeLogResponse.PracticeDate> result =
+                practiceLogService.getPracticeDateListByMonth(yearMonth, member);
+
+        assertThat(result).isEmpty();
     }
 
     // ====== getClassStreak 테스트 ======
